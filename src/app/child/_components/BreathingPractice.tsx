@@ -23,13 +23,13 @@ export default function BreathingPractice({ onClose }: { onClose: () => void }) 
             transitionDuration: "4000ms",
           }}
         />
-        <p className="mt-6 font-playful text-lg font-bold text-[#4E4636]">
+        <p className="mt-6 font-playful text-lg font-bold text-[#463D2E]">
           {phase === "in" ? "Вдох…" : "Выдох…"}
         </p>
-        <p className="text-xs text-[#9a9384] mt-2 mb-6">Дыши вместе с кругом ещё немного</p>
+        <p className="text-xs text-[#8C8577] mt-2 mb-6">Дыши вместе с кругом ещё немного</p>
         <button
           onClick={onClose}
-          className="w-full py-3 rounded-xl bg-[var(--teal)] text-white text-sm font-medium"
+          className="w-full py-3 rounded-xl bg-[var(--brand)] text-white text-sm font-medium"
         >
           Готово
         </button>

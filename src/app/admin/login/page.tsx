@@ -26,17 +26,17 @@ export default function AdminLoginPage() {
   return (
     <main className="flex-1 flex items-center justify-center px-6 py-16">
       <div className="max-w-sm w-full">
-        <h1 className="text-2xl font-semibold text-[var(--teal-dark)] mb-6 text-center">
+        <h1 className="text-2xl font-semibold text-[var(--brand-dark)] mb-6 text-center">
           Вход администратора
         </h1>
         {error && (
-          <div className="mb-4 text-sm text-[#8A4A2A] bg-[#FCEFE9] border border-[#EFC5AE] rounded-xl px-4 py-3">
+          <div className="mb-4 text-sm text-[#8A4A2A] bg-[#FBEAE0] border border-[#E8C3A6] rounded-xl px-4 py-3">
             {error}
           </div>
         )}
         <div className="flex flex-col gap-4">
           <label className="block">
-            <span className="block text-xs text-[#5c655f] mb-1">Логин</span>
+            <span className="block text-xs text-[#6E6659] mb-1">Логин</span>
             <input
               className="w-full py-3 px-4 rounded-2xl border border-[var(--line)]"
               value={login}
@@ -44,7 +44,7 @@ export default function AdminLoginPage() {
             />
           </label>
           <label className="block">
-            <span className="block text-xs text-[#5c655f] mb-1">PIN</span>
+            <span className="block text-xs text-[#6E6659] mb-1">PIN</span>
             <input
               className="w-full py-3 px-4 rounded-2xl border border-[var(--line)]"
               inputMode="numeric"
@@ -56,12 +56,12 @@ export default function AdminLoginPage() {
           <button
             onClick={submit}
             disabled={loading}
-            className="w-full py-4 rounded-2xl bg-[var(--teal-dark)] text-white font-medium disabled:opacity-60"
+            className="w-full py-4 rounded-2xl bg-[var(--brand-dark)] text-white font-medium disabled:opacity-60"
           >
             {loading ? "Входим…" : "Войти"}
           </button>
         </div>
-        <p className="mt-6 text-xs text-[#9a9384] text-center">
+        <p className="mt-6 text-xs text-[#8C8577] text-center">
           Учётные данные администратора по умолчанию создаются автоматически при первом запуске
           и сохраняются в data/admin-credentials.txt на сервере.
         </p>

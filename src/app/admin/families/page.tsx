@@ -41,7 +41,7 @@ export default async function AdminFamiliesPage({
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-[11px] text-[#8b8378]">
+                <tr className="text-left text-[11px] text-[#8C8577]">
                   <th className="py-2 pr-2">Код</th>
                   <th className="py-2 pr-2">Название</th>
                   <th className="py-2 pr-2">Детей</th>
@@ -56,11 +56,11 @@ export default async function AdminFamiliesPage({
                     <td className="py-2 pr-2">{f.childCount}</td>
                     <td className="py-2 pr-2">
                       {f.openAlerts > 0 ? (
-                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#FCEFE9] text-[#8A4A2A]">
+                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#FBEAE0] text-[#8A4A2A]">
                           {f.openAlerts}
                         </span>
                       ) : (
-                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#E9F3E7] text-[#4E7A48]">
+                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#E8F0E1] text-[#4C7A46]">
                           0
                         </span>
                       )}
@@ -77,7 +77,7 @@ export default async function AdminFamiliesPage({
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-[11px] text-[#8b8378]">
+                <tr className="text-left text-[11px] text-[#8C8577]">
                   <th className="py-2 pr-2">Семья</th>
                   <th className="py-2 pr-2">Ребёнок</th>
                   <th className="py-2 pr-2">Возраст</th>
@@ -96,11 +96,11 @@ export default async function AdminFamiliesPage({
                     </td>
                     <td className="py-2 pr-2">
                       {c.openAlerts > 0 ? (
-                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#FCEFE9] text-[#8A4A2A]">
+                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#FBEAE0] text-[#8A4A2A]">
                           Внимание
                         </span>
                       ) : (
-                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#E9F3E7] text-[#4E7A48]">
+                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#E8F0E1] text-[#4C7A46]">
                           Норма
                         </span>
                       )}

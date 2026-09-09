@@ -31,16 +31,16 @@ export default function WeeklyObservationForm({
   return (
     <div className="fixed inset-0 bg-black/40 flex items-end md:items-center justify-center z-30 px-4">
       <div className="bg-white w-full max-w-md rounded-3xl p-6 max-h-[85vh] overflow-y-auto">
-        <h3 className="text-lg font-semibold text-[var(--teal-dark)] mb-1">
+        <h3 className="text-lg font-semibold text-[var(--brand-dark)] mb-1">
           Еженедельное наблюдение
         </h3>
-        <p className="text-xs text-[#9a9384] mb-4">
+        <p className="text-xs text-[#8C8577] mb-4">
           Как часто это происходило на этой неделе?
         </p>
         <div className="flex flex-col gap-5">
           {WEEKLY_OBSERVATION_ITEMS_3_6.map((item) => (
             <div key={item.key}>
-              <p className="text-sm text-[#22312e] mb-2">{item.label}</p>
+              <p className="text-sm text-[#2E3550] mb-2">{item.label}</p>
               <div className="flex gap-1">
                 {WEEKLY_OBSERVATION_SCALE.map((s) => (
                   <button
@@ -49,7 +49,7 @@ export default function WeeklyObservationForm({
                     title={s.label}
                     className={`flex-1 py-2 rounded-lg text-xs border-2 ${
                       answers[item.key] === s.value
-                        ? "border-[var(--coral)] bg-[#FFF1EC]"
+                        ? "border-[var(--glow)] bg-[#FDECC7]"
                         : "border-[var(--line)] bg-white"
                     }`}
                   >
@@ -70,7 +70,7 @@ export default function WeeklyObservationForm({
           <button
             onClick={submit}
             disabled={!complete || submitting}
-            className="flex-1 py-3 rounded-xl bg-[var(--teal)] text-white text-sm font-medium disabled:opacity-50"
+            className="flex-1 py-3 rounded-xl bg-[var(--brand)] text-white text-sm font-medium disabled:opacity-50"
           >
             {submitting ? "Отправляем…" : "Отправить"}
           </button>

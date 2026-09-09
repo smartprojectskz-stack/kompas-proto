@@ -90,10 +90,10 @@ export default function LoginPage() {
   return (
     <main className="flex-1 flex flex-col items-center justify-center px-6 py-16">
       <div className="max-w-md w-full">
-        <h1 className="text-2xl font-semibold text-[var(--teal-dark)] mb-6 text-center">Вход</h1>
+        <h1 className="text-2xl font-semibold text-[var(--brand-dark)] mb-6 text-center">Вход</h1>
 
         {error && (
-          <div className="mb-4 text-sm text-[#8A4A2A] bg-[#FCEFE9] border border-[#EFC5AE] rounded-xl px-4 py-3">
+          <div className="mb-4 text-sm text-[#8A4A2A] bg-[#FBEAE0] border border-[#E8C3A6] rounded-xl px-4 py-3">
             {error}
           </div>
         )}
@@ -101,7 +101,7 @@ export default function LoginPage() {
         {!members && (
           <div className="flex flex-col gap-4">
             <label className="block">
-              <span className="block text-xs text-[#5c655f] mb-1">Код семьи</span>
+              <span className="block text-xs text-[#6E6659] mb-1">Код семьи</span>
               <input
                 className="w-full py-4 px-4 rounded-2xl border border-[var(--line)] text-center text-2xl tracking-[0.3em] uppercase"
                 value={code}
@@ -113,7 +113,7 @@ export default function LoginPage() {
             <button
               onClick={submitCode}
               disabled={loading}
-              className="w-full py-4 rounded-2xl bg-[var(--teal)] text-white font-medium hover:bg-[var(--teal-dark)] disabled:opacity-60"
+              className="w-full py-4 rounded-2xl bg-[var(--brand)] text-white font-medium hover:bg-[var(--brand-dark)] disabled:opacity-60"
             >
               {loading ? "Ищем…" : "Продолжить"}
             </button>
@@ -122,17 +122,17 @@ export default function LoginPage() {
 
         {members && !selected && (
           <div className="flex flex-col gap-3">
-            <p className="text-sm text-[#5c655f] mb-1">{members.family.name} — выберите профиль</p>
+            <p className="text-sm text-[#6E6659] mb-1">{members.family.name} — выберите профиль</p>
             {members.parents.map((p) => (
               <button
                 key={p.id}
                 onClick={() => selectParent(p)}
-                className="flex items-center gap-3 bg-white border border-[var(--line)] rounded-2xl px-4 py-3 text-left hover:border-[var(--teal)]"
+                className="flex items-center gap-3 bg-white border border-[var(--line)] rounded-2xl px-4 py-3 text-left hover:border-[var(--brand)]"
               >
                 <span className="text-2xl">👤</span>
                 <span>
                   <span className="block font-medium">{p.name}</span>
-                  <span className="block text-xs text-[#9a9384]">Родитель</span>
+                  <span className="block text-xs text-[#8C8577]">Родитель</span>
                 </span>
               </button>
             ))}
@@ -140,12 +140,12 @@ export default function LoginPage() {
               <button
                 key={c.id}
                 onClick={() => selectChild(c)}
-                className="flex items-center gap-3 bg-white border border-[var(--line)] rounded-2xl px-4 py-3 text-left hover:border-[var(--teal)]"
+                className="flex items-center gap-3 bg-white border border-[var(--line)] rounded-2xl px-4 py-3 text-left hover:border-[var(--brand)]"
               >
                 <span className="text-2xl">{c.avatar}</span>
                 <span>
                   <span className="block font-medium">{c.name}</span>
-                  <span className="block text-xs text-[#9a9384]">
+                  <span className="block text-xs text-[#8C8577]">
                     {AGE_GROUP_LABEL[c.age_group as AgeGroup]}
                     {c.needsPin ? " · нужен PIN" : ""}
                   </span>
@@ -157,7 +157,7 @@ export default function LoginPage() {
                 setMembers(null);
                 setCode("");
               }}
-              className="text-xs text-[#9a9384] underline mt-2"
+              className="text-xs text-[#8C8577] underline mt-2"
             >
               Ввести другой код
             </button>
@@ -166,7 +166,7 @@ export default function LoginPage() {
 
         {selected && (
           <div className="flex flex-col gap-4">
-            <p className="text-sm text-[#5c655f]">PIN для {selected.name}</p>
+            <p className="text-sm text-[#6E6659]">PIN для {selected.name}</p>
             <input
               className="w-full py-4 px-4 rounded-2xl border border-[var(--line)] text-center text-2xl tracking-[0.3em]"
               inputMode="numeric"
@@ -178,11 +178,11 @@ export default function LoginPage() {
             <button
               onClick={submitPin}
               disabled={loading}
-              className="w-full py-4 rounded-2xl bg-[var(--teal)] text-white font-medium hover:bg-[var(--teal-dark)] disabled:opacity-60"
+              className="w-full py-4 rounded-2xl bg-[var(--brand)] text-white font-medium hover:bg-[var(--brand-dark)] disabled:opacity-60"
             >
               {loading ? "Входим…" : "Войти"}
             </button>
-            <button onClick={() => setSelected(null)} className="text-xs text-[#9a9384] underline">
+            <button onClick={() => setSelected(null)} className="text-xs text-[#8C8577] underline">
               Назад к выбору профиля
             </button>
           </div>

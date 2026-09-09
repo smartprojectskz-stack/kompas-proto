@@ -83,16 +83,16 @@ export default function OnboardingPage() {
       <main className="flex-1 flex items-center justify-center px-6 py-16">
         <div className="max-w-md w-full text-center">
           <div className="text-5xl mb-4">🎉</div>
-          <h1 className="text-2xl font-semibold text-[var(--teal-dark)] mb-3">Семья создана</h1>
-          <p className="text-sm text-[#5c655f] mb-6">
+          <h1 className="text-2xl font-semibold text-[var(--brand-dark)] mb-3">Семья создана</h1>
+          <p className="text-sm text-[#6E6659] mb-6">
             Сохраните код семьи — он понадобится для входа с других устройств и детям.
           </p>
-          <div className="text-4xl font-semibold tracking-[0.3em] text-[var(--teal)] bg-white border border-[var(--line)] rounded-2xl py-6 mb-8">
+          <div className="text-4xl font-semibold tracking-[0.3em] text-[var(--brand)] bg-white border border-[var(--line)] rounded-2xl py-6 mb-8">
             {familyCode}
           </div>
           <button
             onClick={() => router.push("/parent")}
-            className="w-full py-4 rounded-2xl bg-[var(--teal)] text-white font-medium hover:bg-[var(--teal-dark)] transition-colors"
+            className="w-full py-4 rounded-2xl bg-[var(--brand)] text-white font-medium hover:bg-[var(--brand-dark)] transition-colors"
           >
             Перейти в дашборд родителя
           </button>
@@ -104,11 +104,11 @@ export default function OnboardingPage() {
   return (
     <main className="flex-1 px-6 py-10">
       <div className="max-w-md mx-auto w-full">
-        <h1 className="text-2xl font-semibold text-[var(--teal-dark)] mb-1">Создание семьи</h1>
-        <p className="text-sm text-[#9a9384] mb-6">Шаг {step} из 2</p>
+        <h1 className="text-2xl font-semibold text-[var(--brand-dark)] mb-1">Создание семьи</h1>
+        <p className="text-sm text-[#8C8577] mb-6">Шаг {step} из 2</p>
 
         {error && (
-          <div className="mb-4 text-sm text-[#8A4A2A] bg-[#FCEFE9] border border-[#EFC5AE] rounded-xl px-4 py-3">
+          <div className="mb-4 text-sm text-[#8A4A2A] bg-[#FBEAE0] border border-[#E8C3A6] rounded-xl px-4 py-3">
             {error}
           </div>
         )}
@@ -153,7 +153,7 @@ export default function OnboardingPage() {
             </Field>
             <button
               onClick={goStep2}
-              className="mt-2 w-full py-4 rounded-2xl bg-[var(--teal)] text-white font-medium hover:bg-[var(--teal-dark)] transition-colors"
+              className="mt-2 w-full py-4 rounded-2xl bg-[var(--brand)] text-white font-medium hover:bg-[var(--brand-dark)] transition-colors"
             >
               Далее
             </button>
@@ -171,7 +171,7 @@ export default function OnboardingPage() {
                     {children.length > 1 && (
                       <button
                         onClick={() => removeChild(c.id)}
-                        className="text-xs text-[#9a9384] underline"
+                        className="text-xs text-[#8C8577] underline"
                       >
                         Удалить
                       </button>
@@ -183,7 +183,7 @@ export default function OnboardingPage() {
                         key={a}
                         onClick={() => updateChild(c.id, { avatar: a })}
                         className={`w-10 h-10 rounded-full text-lg flex items-center justify-center border-2 ${
-                          c.avatar === a ? "border-[var(--coral)] bg-[#FFF1EC]" : "border-[var(--line)] bg-white"
+                          c.avatar === a ? "border-[var(--glow)] bg-[#FDECC7]" : "border-[var(--line)] bg-white"
                         }`}
                       >
                         {a}
@@ -209,7 +209,7 @@ export default function OnboardingPage() {
                     </Field>
                   </div>
                   {group && (
-                    <p className="mt-2 text-xs text-[#9a9384]">
+                    <p className="mt-2 text-xs text-[#8C8577]">
                       Возрастной сценарий: {AGE_GROUP_LABEL[group]}
                     </p>
                   )}
@@ -235,7 +235,7 @@ export default function OnboardingPage() {
 
             <button
               onClick={addChild}
-              className="w-full py-3 rounded-2xl border border-dashed border-[var(--line)] text-sm text-[var(--teal)]"
+              className="w-full py-3 rounded-2xl border border-dashed border-[var(--line)] text-sm text-[var(--brand)]"
             >
               + Добавить ещё ребёнка
             </button>
@@ -250,7 +250,7 @@ export default function OnboardingPage() {
               <button
                 onClick={submit}
                 disabled={submitting}
-                className="flex-1 py-4 rounded-2xl bg-[var(--teal)] text-white font-medium hover:bg-[var(--teal-dark)] transition-colors disabled:opacity-60"
+                className="flex-1 py-4 rounded-2xl bg-[var(--brand)] text-white font-medium hover:bg-[var(--brand-dark)] transition-colors disabled:opacity-60"
               >
                 {submitting ? "Создаём…" : "Создать семью"}
               </button>
@@ -269,7 +269,7 @@ export default function OnboardingPage() {
           background: white;
         }
         .input:focus {
-          outline: 2px solid var(--teal);
+          outline: 2px solid var(--brand);
           outline-offset: -1px;
         }
       `}</style>
@@ -280,7 +280,7 @@ export default function OnboardingPage() {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="block text-xs text-[#5c655f] mb-1">{label}</span>
+      <span className="block text-xs text-[#6E6659] mb-1">{label}</span>
       {children}
     </label>
   );

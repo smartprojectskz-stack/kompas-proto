@@ -54,7 +54,7 @@ export default function Checkin36({ childName }: { childName: string }) {
               🔊
             </button>
           </div>
-          <div className="text-center px-4 pt-4 pb-6 font-playful text-2xl font-extrabold text-[#4E4636]">
+          <div className="text-center px-4 pt-4 pb-6 font-playful text-2xl font-extrabold text-[#463D2E]">
             Какая сегодня погода внутри тебя, {childName}?
           </div>
           <div className="flex-1 grid grid-cols-2 gap-4 px-5 pb-8 max-w-md mx-auto w-full">
@@ -75,12 +75,12 @@ export default function Checkin36({ childName }: { childName: string }) {
       {showResponse && current && (
         <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
           <div className="text-8xl mb-6">{current.emoji}</div>
-          <div className="font-playful text-xl font-bold text-[#4E4636] max-w-xs mb-8">
+          <div className="font-playful text-xl font-bold text-[#463D2E] max-w-xs mb-8">
             {current.response}
           </div>
           <button
             onClick={() => setShowResponse(false)}
-            className="rounded-full bg-white px-6 py-3 font-playful font-bold text-sm shadow-[0_3px_0_rgba(0,0,0,0.06)] text-[#4E4636]"
+            className="rounded-full bg-white px-6 py-3 font-playful font-bold text-sm shadow-[0_3px_0_rgba(0,0,0,0.06)] text-[#463D2E]"
           >
             Выбрать ещё раз
           </button>
@@ -101,6 +101,6 @@ function weatherButtonColor(key: string): string {
     case "storm":
       return "var(--storm)";
     default:
-      return "#ffffff";
+      return "#FFFDF8";
   }
 }

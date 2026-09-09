@@ -21,7 +21,7 @@ export default function RiskQueue({ alerts }: { alerts: RiskAlert[] }) {
   }
 
   if (items.length === 0) {
-    return <p className="text-sm text-[#5c655f]">Открытых сигналов риска сейчас нет.</p>;
+    return <p className="text-sm text-[#6E6659]">Открытых сигналов риска сейчас нет.</p>;
   }
 
   return (
@@ -35,7 +35,7 @@ export default function RiskQueue({ alerts }: { alerts: RiskAlert[] }) {
             <div className="flex items-center gap-2 mb-0.5">
               <span
                 className={`text-[10px] px-2 py-0.5 rounded-full ${
-                  a.severity === "critical" ? "bg-[#FCEFE9] text-[#8A4A2A]" : "bg-[#F6F2E9] text-[#6b6455]"
+                  a.severity === "critical" ? "bg-[#FBEAE0] text-[#8A4A2A]" : "bg-[#F7EEDD] text-[#6E6659]"
                 }`}
               >
                 {a.severity === "critical" ? "Критично" : "Внимание"}
@@ -44,7 +44,7 @@ export default function RiskQueue({ alerts }: { alerts: RiskAlert[] }) {
                 {a.family_name} — {a.child_name}
               </span>
             </div>
-            <p className="text-xs text-[#5c655f] truncate">{a.message}</p>
+            <p className="text-xs text-[#6E6659] truncate">{a.message}</p>
           </div>
           <button
             onClick={() => resolve(a.id)}

@@ -65,7 +65,7 @@ export default function Checkin1217({ childName }: { childName: string }) {
 
   return (
     <div className="flex-1 px-5 py-6 max-w-md mx-auto w-full">
-      <h1 className="text-2xl font-semibold text-[var(--teal-dark)] mb-6 text-center">
+      <h1 className="text-2xl font-semibold text-[var(--brand-dark)] mb-6 text-center">
         Как ты сегодня?
       </h1>
 
@@ -76,21 +76,21 @@ export default function Checkin1217({ childName }: { childName: string }) {
               key={v}
               onClick={() => choose(v)}
               className={`aspect-square rounded-xl text-sm font-medium border-2 ${
-                selected === v ? "border-[var(--coral)] bg-[#FFF1EC]" : "border-[var(--line)] bg-white"
+                selected === v ? "border-[var(--glow)] bg-[#FDECC7]" : "border-[var(--line)] bg-white"
               }`}
             >
               {v}
             </button>
           ))}
         </div>
-        <div className="flex justify-between text-[11px] text-[#8b8378] mt-2">
+        <div className="flex justify-between text-[11px] text-[#8C8577] mt-2">
           <span>{MOOD_SCALE_12_17_LABELS[0]}</span>
           <span>{MOOD_SCALE_12_17_LABELS[6]}</span>
         </div>
 
         {!submitted && (
           <div className="mt-4">
-            <label className="block text-xs text-[#8b8378] mb-1">
+            <label className="block text-xs text-[#8C8577] mb-1">
               Личная заметка (необязательно, видна только тебе)
             </label>
             <textarea
@@ -102,7 +102,7 @@ export default function Checkin1217({ childName }: { childName: string }) {
           </div>
         )}
         {submitted && (
-          <p className="mt-4 text-sm text-[var(--teal-dark)] bg-[#F0F7EF] rounded-xl p-3">
+          <p className="mt-4 text-sm text-[var(--brand-dark)] bg-[#EFF4E9] rounded-xl p-3">
             Спасибо, что отметил(а). Заметка остаётся только твоей.
           </p>
         )}
@@ -112,29 +112,29 @@ export default function Checkin1217({ childName }: { childName: string }) {
         onClick={() => setShowBreathing(true)}
         className="w-full bg-white border border-[var(--line)] rounded-2xl px-4 py-3 text-left mb-5"
       >
-        <span className="block font-medium text-sm text-[var(--teal-dark)]">Подыши со мной</span>
-        <span className="block text-xs text-[#5c655f]">1 минута, чтобы снизить накал</span>
+        <span className="block font-medium text-sm text-[var(--brand-dark)]">Подыши со мной</span>
+        <span className="block text-xs text-[#6E6659]">1 минута, чтобы снизить накал</span>
       </button>
 
       {biweeklyDue && !reportDone && (
         <div className="bg-white border border-[var(--line)] rounded-3xl p-4">
-          <h3 className="font-medium text-base text-[var(--teal-dark)] mb-3">
+          <h3 className="font-medium text-base text-[var(--brand-dark)] mb-3">
             Короткий отчёт за две недели
           </h3>
 
           {!gatekeeperAnswered && (
             <div>
-              <p className="text-sm text-[#5c655f] mb-4">{GATEKEEPER_QUESTION}</p>
+              <p className="text-sm text-[#6E6659] mb-4">{GATEKEEPER_QUESTION}</p>
               <div className="flex gap-3">
                 <button
                   onClick={() => answerGatekeeper(false)}
-                  className="flex-1 py-3 rounded-xl bg-[#F0F7EF] text-[var(--teal-dark)] font-medium"
+                  className="flex-1 py-3 rounded-xl bg-[#EFF4E9] text-[var(--brand-dark)] font-medium"
                 >
                   Нет
                 </button>
                 <button
                   onClick={() => answerGatekeeper(true)}
-                  className="flex-1 py-3 rounded-xl bg-[#FCEFE9] text-[#8A4A2A] font-medium"
+                  className="flex-1 py-3 rounded-xl bg-[#FBEAE0] text-[#8A4A2A] font-medium"
                 >
                   Да
                 </button>
@@ -146,7 +146,7 @@ export default function Checkin1217({ childName }: { childName: string }) {
             <div className="flex flex-col gap-4">
               {BIWEEKLY_DOMAINS_12_17.map((d) => (
                 <div key={d.key}>
-                  <p className="text-sm text-[#5c655f] mb-2">{d.question}</p>
+                  <p className="text-sm text-[#6E6659] mb-2">{d.question}</p>
                   <div className="flex gap-2">
                     {[1, 2, 3, 4, 5].map((v) => (
                       <button
@@ -154,7 +154,7 @@ export default function Checkin1217({ childName }: { childName: string }) {
                         onClick={() => setDomainScores((prev) => ({ ...prev, [d.key]: v }))}
                         className={`flex-1 py-2 rounded-lg text-sm border-2 ${
                           domainScores[d.key] === v
-                            ? "border-[var(--coral)] bg-[#FFF1EC]"
+                            ? "border-[var(--glow)] bg-[#FDECC7]"
                             : "border-[var(--line)] bg-white"
                         }`}
                       >
@@ -167,7 +167,7 @@ export default function Checkin1217({ childName }: { childName: string }) {
               <button
                 onClick={submitDomains}
                 disabled={Object.keys(domainScores).length < BIWEEKLY_DOMAINS_12_17.length}
-                className="w-full py-3 rounded-xl bg-[var(--teal)] text-white font-medium disabled:opacity-50"
+                className="w-full py-3 rounded-xl bg-[var(--brand)] text-white font-medium disabled:opacity-50"
               >
                 Отправить
               </button>
@@ -176,7 +176,7 @@ export default function Checkin1217({ childName }: { childName: string }) {
         </div>
       )}
       {reportDone && (
-        <div className="bg-[#F0F7EF] rounded-3xl p-4 text-sm text-[var(--teal-dark)] text-center">
+        <div className="bg-[#EFF4E9] rounded-3xl p-4 text-sm text-[var(--brand-dark)] text-center">
           Спасибо за честные ответы 🌿
         </div>
       )}

@@ -58,7 +58,7 @@ export default function Checkin711({ childName }: { childName: string }) {
 
   return (
     <div className="flex-1 px-5 py-6 max-w-md mx-auto w-full font-playful">
-      <h1 className="text-2xl font-bold text-[var(--teal-dark)] mb-6 text-center">
+      <h1 className="text-2xl font-bold text-[var(--brand-dark)] mb-6 text-center">
         Привет, {childName}! Как ты сегодня?
       </h1>
 
@@ -69,7 +69,7 @@ export default function Checkin711({ childName }: { childName: string }) {
               key={m.key}
               onClick={() => choose(m.key)}
               className={`flex-1 aspect-square rounded-2xl border-2 text-2xl transition-transform active:scale-90 ${
-                selected === m.key ? "border-[var(--coral)] bg-[#FFF1EC]" : "border-[var(--line)] bg-white"
+                selected === m.key ? "border-[var(--glow)] bg-[#FDECC7]" : "border-[var(--line)] bg-white"
               }`}
               title={m.label}
             >
@@ -77,21 +77,21 @@ export default function Checkin711({ childName }: { childName: string }) {
             </button>
           ))}
         </div>
-        <div className="flex justify-between text-[11px] text-[#8b8378] mt-2 font-sans">
+        <div className="flex justify-between text-[11px] text-[#8C8577] mt-2 font-sans">
           <span>Супер</span>
           <span>Так себе</span>
           <span>Тяжело</span>
         </div>
 
         {submitted && current && (
-          <div className="mt-4 p-4 rounded-2xl bg-[#F0F7EF] text-[var(--teal-dark)] text-[15px] font-sans">
+          <div className="mt-4 p-4 rounded-2xl bg-[#EFF4E9] text-[var(--brand-dark)] text-[15px] font-sans">
             {current.response}
           </div>
         )}
 
         {!submitted && (
           <div className="mt-4 font-sans">
-            <label className="block text-xs text-[#8b8378] mb-1">{prompt} (необязательно)</label>
+            <label className="block text-xs text-[#8C8577] mb-1">{prompt} (необязательно)</label>
             <textarea
               className="w-full rounded-xl border border-[var(--line)] p-3 text-sm"
               rows={2}
@@ -104,28 +104,28 @@ export default function Checkin711({ childName }: { childName: string }) {
 
       {dilemmaIdx !== null && !dilemmaDone && (
         <div className="bg-white border-2 border-[var(--line)] rounded-3xl p-4 mb-4 font-sans">
-          <h3 className="font-playful text-base font-bold text-[var(--teal-dark)] mb-2">
+          <h3 className="font-playful text-base font-bold text-[var(--brand-dark)] mb-2">
             Маленькая история
           </h3>
-          <p className="text-sm text-[#5c655f] mb-3">{DILEMMAS_7_11[dilemmaIdx].story}</p>
+          <p className="text-sm text-[#6E6659] mb-3">{DILEMMAS_7_11[dilemmaIdx].story}</p>
           <div className="flex flex-col gap-2">
             {DILEMMAS_7_11[dilemmaIdx].options.map((opt, i) => (
               <button
                 key={i}
                 onClick={() => chooseDilemma(opt.pattern)}
-                className="text-left bg-[#faf7f0] border border-[var(--line)] rounded-2xl px-4 py-3"
+                className="text-left bg-[#F7EEDD] border border-[var(--line)] rounded-2xl px-4 py-3"
               >
-                <span className="block font-playful font-bold text-sm text-[var(--teal-dark)]">
+                <span className="block font-playful font-bold text-sm text-[var(--brand-dark)]">
                   {opt.text}
                 </span>
-                <span className="block text-xs text-[#5c655f]">{opt.sub}</span>
+                <span className="block text-xs text-[#6E6659]">{opt.sub}</span>
               </button>
             ))}
           </div>
         </div>
       )}
       {dilemmaDone && (
-        <div className="bg-[#F0F7EF] rounded-3xl p-4 mb-4 text-sm text-[var(--teal-dark)] font-sans text-center">
+        <div className="bg-[#EFF4E9] rounded-3xl p-4 mb-4 text-sm text-[var(--brand-dark)] font-sans text-center">
           Спасибо, что поделился(ась)! 🌟
         </div>
       )}
@@ -134,10 +134,10 @@ export default function Checkin711({ childName }: { childName: string }) {
         onClick={() => setShowBreathing(true)}
         className="w-full bg-white border-2 border-[var(--line)] rounded-2xl px-4 py-3 text-left font-sans"
       >
-        <span className="block font-playful font-bold text-sm text-[var(--teal-dark)]">
+        <span className="block font-playful font-bold text-sm text-[var(--brand-dark)]">
           Подыши со мной
         </span>
-        <span className="block text-xs text-[#5c655f]">1 минута, чтобы успокоиться</span>
+        <span className="block text-xs text-[#6E6659]">1 минута, чтобы успокоиться</span>
       </button>
 
       {showBreathing && <BreathingPractice onClose={() => setShowBreathing(false)} />}

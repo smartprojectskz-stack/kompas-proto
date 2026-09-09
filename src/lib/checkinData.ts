@@ -10,10 +10,10 @@ export interface WeatherOption {
 }
 
 export const WEATHER_OPTIONS: WeatherOption[] = [
-  { key: "sun", emoji: "☀️", label: "Солнце", response: "Солнечный денёк!", moodValue: 1, bg: "#FFF7E0" },
-  { key: "cloud", emoji: "⛅", label: "Облачно", response: "Немного облачно — и это нормально.", moodValue: 2, bg: "#EAF6FB" },
-  { key: "rainbow", emoji: "🌈", label: "Радуга", response: "Ура, радуга! Что-то хорошее случилось?", moodValue: 2, bg: "#F1FBEF" },
-  { key: "storm", emoji: "🌧️", label: "Гроза", response: "Ого, буря внутри. Мы рядом.", moodValue: 5, bg: "#EFEFF6" },
+  { key: "sun", emoji: "☀️", label: "Солнце", response: "Солнечный денёк!", moodValue: 1, bg: "#FFF6E4" },
+  { key: "cloud", emoji: "⛅", label: "Облачно", response: "Немного облачно — и это нормально.", moodValue: 2, bg: "#EEF2FA" },
+  { key: "rainbow", emoji: "🌈", label: "Радуга", response: "Ура, радуга! Что-то хорошее случилось?", moodValue: 2, bg: "#F1F7EC" },
+  { key: "storm", emoji: "🌧️", label: "Гроза", response: "Ого, буря внутри. Мы рядом.", moodValue: 5, bg: "#EDEBF5" },
 ];
 
 export interface MoodOption {

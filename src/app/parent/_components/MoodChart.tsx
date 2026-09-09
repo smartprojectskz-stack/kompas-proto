@@ -10,7 +10,7 @@ export interface MoodPoint {
 export default function MoodChart({ points }: { points: MoodPoint[] }) {
   if (points.length === 0) {
     return (
-      <div className="h-24 flex items-center justify-center text-sm text-[#9a9384]">
+      <div className="h-24 flex items-center justify-center text-sm text-[#8C8577]">
         Пока нет данных за этот период
       </div>
     );
@@ -24,10 +24,10 @@ export default function MoodChart({ points }: { points: MoodPoint[] }) {
           <Line
             type="monotone"
             dataKey="wellbeing"
-            stroke="#8CA88A"
+            stroke="#8FAE7E"
             strokeWidth={2.5}
             dot={false}
-            activeDot={{ r: 4, fill: "#2F5D5A" }}
+            activeDot={{ r: 4, fill: "#2E4460" }}
           />
         </LineChart>
       </ResponsiveContainer>

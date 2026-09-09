@@ -47,7 +47,7 @@ export default function ParentDashboard({ data }: { data: ParentDashboardData })
             href={`/parent?child=${c.id}`}
             className={`px-3 py-2 rounded-full text-sm border ${
               c.id === data.selectedChild.id
-                ? "bg-[var(--teal)] text-white border-[var(--teal)]"
+                ? "bg-[var(--brand)] text-white border-[var(--brand)]"
                 : "bg-white border-[var(--line)] text-[var(--ink)]"
             }`}
           >
@@ -56,17 +56,17 @@ export default function ParentDashboard({ data }: { data: ParentDashboardData })
         ))}
         <button
           onClick={() => setShowAddChild(true)}
-          className="px-3 py-2 rounded-full text-sm border border-dashed border-[var(--line)] text-[var(--teal)]"
+          className="px-3 py-2 rounded-full text-sm border border-dashed border-[var(--line)] text-[var(--brand)]"
         >
           + Ребёнок
         </button>
       </div>
-      <p className="text-xs text-[#9a9384] mb-5">
+      <p className="text-xs text-[#8C8577] mb-5">
         {data.familyName} · код семьи {data.familyCode}
       </p>
 
       {critical && (
-        <div className="mb-4 bg-[#FCEFE9] border border-[#E9A387] rounded-2xl p-4">
+        <div className="mb-4 bg-[#FBEAE0] border border-[#E9A387] rounded-2xl p-4">
           <b className="block text-[#7A3D20] mb-1">Требуется немедленное внимание</b>
           <p className="text-sm text-[#8A4A2A] mb-3">{critical.message}</p>
           <div className="flex flex-col gap-2">
@@ -80,7 +80,7 @@ export default function ParentDashboard({ data }: { data: ParentDashboardData })
       )}
 
       {warnings.map((a) => (
-        <div key={a.id} className="mb-4 bg-[#FCEFE9] border border-[#EFC5AE] rounded-2xl p-4">
+        <div key={a.id} className="mb-4 bg-[#FBEAE0] border border-[#E8C3A6] rounded-2xl p-4">
           <b className="block text-[#7A3D20] mb-1">Стоит обратить внимание</b>
           <p className="text-sm text-[#8A4A2A]">{a.message}</p>
         </div>
@@ -89,7 +89,7 @@ export default function ParentDashboard({ data }: { data: ParentDashboardData })
       <div className="bg-white border border-[var(--line)] rounded-2xl p-4 mb-4">
         <h3 className="text-sm font-medium mb-1">Эмоциональный фон · 14 дней</h3>
         <MoodChart points={data.moodPoints} />
-        <div className="flex justify-between text-[11px] text-[#9a9384] mt-1">
+        <div className="flex justify-between text-[11px] text-[#8C8577] mt-1">
           <span>2 недели назад</span>
           <span>сегодня</span>
         </div>
@@ -113,16 +113,16 @@ export default function ParentDashboard({ data }: { data: ParentDashboardData })
         <div className="bg-white border border-[var(--line)] rounded-2xl p-4 mb-4">
           <h3 className="text-sm font-medium mb-2">Еженедельное наблюдение</h3>
           {data.weeklyObservationDone ? (
-            <p className="text-sm text-[#5c655f]">Анкета за эту неделю уже заполнена. Спасибо!</p>
+            <p className="text-sm text-[#6E6659]">Анкета за эту неделю уже заполнена. Спасибо!</p>
           ) : (
             <>
-              <p className="text-sm text-[#5c655f] mb-3">
+              <p className="text-sm text-[#6E6659] mb-3">
                 В 3–6 лет основной источник сигналов — наблюдение родителя. Уделите минуту короткому
                 чек-листу за эту неделю.
               </p>
               <button
                 onClick={() => setShowWeekly(true)}
-                className="w-full py-3 rounded-xl bg-[var(--teal)] text-white text-sm font-medium"
+                className="w-full py-3 rounded-xl bg-[var(--brand)] text-white text-sm font-medium"
               >
                 Заполнить анкету
               </button>
@@ -140,13 +140,13 @@ export default function ParentDashboard({ data }: { data: ParentDashboardData })
             </div>
             <div>
               <b className="block text-sm">{r.title}</b>
-              <span className="text-xs text-[#5c655f]">{r.text}</span>
+              <span className="text-xs text-[#6E6659]">{r.text}</span>
             </div>
           </div>
         ))}
       </div>
 
-      <p className="text-xs text-[#9a9384] text-center leading-relaxed">{SAFETY_DISCLAIMER}</p>
+      <p className="text-xs text-[#8C8577] text-center leading-relaxed">{SAFETY_DISCLAIMER}</p>
 
       {showAddChild && <AddChildForm onClose={() => setShowAddChild(false)} />}
       {showWeekly && (
@@ -162,9 +162,9 @@ export default function ParentDashboard({ data }: { data: ParentDashboardData })
 
 function StatBox({ num, label }: { num: string; label: string }) {
   return (
-    <div className="bg-[#F6F2E9] rounded-xl p-3 text-center">
-      <div className="font-serif text-lg text-[var(--teal-dark)] leading-tight">{num}</div>
-      <div className="text-[11px] text-[#8b8378] mt-1">{label}</div>
+    <div className="bg-[#F7EEDD] rounded-xl p-3 text-center">
+      <div className="font-display text-lg text-[var(--brand-dark)] leading-tight">{num}</div>
+      <div className="text-[11px] text-[#8C8577] mt-1">{label}</div>
     </div>
   );
 }

@@ -1,4 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <circle cx="50" cy="50" r="46" fill="#2F5D5A"/>
-  <text x="50" y="66" font-size="56" text-anchor="middle">🧭</text>
+  <defs>
+    <radialGradient id="g" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FCD98A"/>
+      <stop offset="45%" stop-color="#F0A94E" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#18233A" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="50" cy="50" r="48" fill="#18233A"/>
+  <circle cx="50" cy="50" r="46" fill="url(#g)"/>
+  <ellipse cx="48" cy="53" rx="13" ry="10" fill="#3A3352"/>
+  <circle cx="61" cy="51" r="5" fill="#FCD98A"/>
 </svg>

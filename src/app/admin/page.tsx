@@ -36,8 +36,8 @@ export default async function AdminOverviewPage() {
 function StatBox({ num, label }: { num: string; label: string }) {
   return (
     <div className="bg-white border border-[var(--line)] rounded-xl p-3 text-center">
-      <div className="font-serif text-xl text-[var(--teal-dark)] leading-tight">{num}</div>
-      <div className="text-[11px] text-[#8b8378] mt-1">{label}</div>
+      <div className="font-display text-xl text-[var(--brand-dark)] leading-tight">{num}</div>
+      <div className="text-[11px] text-[#8C8577] mt-1">{label}</div>
     </div>
   );
 }

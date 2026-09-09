@@ -37,7 +37,7 @@ export default async function ParentPage({
       <div className="flex-1 flex flex-col min-h-screen">
         <ParentTopBar parentName={parentName} />
         <div className="flex-1 flex items-center justify-center px-6 text-center">
-          <p className="text-sm text-[#5c655f] max-w-xs">
+          <p className="text-sm text-[#6E6659] max-w-xs">
             В семье пока нет детей. Добавьте профиль ребёнка, чтобы начать ежедневный чек-ин.
           </p>
         </div>

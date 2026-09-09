@@ -34,9 +34,9 @@ export default function AddChildForm({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 bg-black/40 flex items-end md:items-center justify-center z-30 px-4">
       <div className="bg-white w-full max-w-md rounded-3xl p-6">
-        <h3 className="text-lg font-semibold text-[var(--teal-dark)] mb-4">Добавить ребёнка</h3>
+        <h3 className="text-lg font-semibold text-[var(--brand-dark)] mb-4">Добавить ребёнка</h3>
         {error && (
-          <div className="mb-3 text-sm text-[#8A4A2A] bg-[#FCEFE9] border border-[#EFC5AE] rounded-xl px-4 py-3">
+          <div className="mb-3 text-sm text-[#8A4A2A] bg-[#FBEAE0] border border-[#E8C3A6] rounded-xl px-4 py-3">
             {error}
           </div>
         )}
@@ -46,7 +46,7 @@ export default function AddChildForm({ onClose }: { onClose: () => void }) {
               key={a}
               onClick={() => setAvatar(a)}
               className={`w-10 h-10 rounded-full text-lg flex items-center justify-center border-2 ${
-                avatar === a ? "border-[var(--coral)] bg-[#FFF1EC]" : "border-[var(--line)] bg-white"
+                avatar === a ? "border-[var(--glow)] bg-[#FDECC7]" : "border-[var(--line)] bg-white"
               }`}
             >
               {a}
@@ -54,7 +54,7 @@ export default function AddChildForm({ onClose }: { onClose: () => void }) {
           ))}
         </div>
         <label className="block mb-3">
-          <span className="block text-xs text-[#5c655f] mb-1">Имя</span>
+          <span className="block text-xs text-[#6E6659] mb-1">Имя</span>
           <input
             className="w-full py-3 px-4 rounded-xl border border-[var(--line)]"
             value={name}
@@ -62,7 +62,7 @@ export default function AddChildForm({ onClose }: { onClose: () => void }) {
           />
         </label>
         <label className="block mb-2">
-          <span className="block text-xs text-[#5c655f] mb-1">Дата рождения</span>
+          <span className="block text-xs text-[#6E6659] mb-1">Дата рождения</span>
           <input
             type="date"
             className="w-full py-3 px-4 rounded-xl border border-[var(--line)]"
@@ -71,11 +71,11 @@ export default function AddChildForm({ onClose }: { onClose: () => void }) {
           />
         </label>
         {group && (
-          <p className="text-xs text-[#9a9384] mb-3">Возрастной сценарий: {AGE_GROUP_LABEL[group]}</p>
+          <p className="text-xs text-[#8C8577] mb-3">Возрастной сценарий: {AGE_GROUP_LABEL[group]}</p>
         )}
         {group === "12-17" && (
           <label className="block mb-3">
-            <span className="block text-xs text-[#5c655f] mb-1">PIN ребёнка (4 цифры)</span>
+            <span className="block text-xs text-[#6E6659] mb-1">PIN ребёнка (4 цифры)</span>
             <input
               className="w-full py-3 px-4 rounded-xl border border-[var(--line)]"
               inputMode="numeric"
@@ -95,7 +95,7 @@ export default function AddChildForm({ onClose }: { onClose: () => void }) {
           <button
             onClick={submit}
             disabled={submitting}
-            className="flex-1 py-3 rounded-xl bg-[var(--teal)] text-white text-sm font-medium disabled:opacity-50"
+            className="flex-1 py-3 rounded-xl bg-[var(--brand)] text-white text-sm font-medium disabled:opacity-50"
           >
             {submitting ? "Добавляем…" : "Добавить"}
           </button>
