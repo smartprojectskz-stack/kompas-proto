@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f3eee3;
+  --panel: #ffffff;
+  --ink: #22312e;
+  --teal: #2f5d5a;
+  --teal-dark: #1b3634;
+  --sage: #8ca88a;
+  --coral: #e67856;
+  --sky: #6e93a8;
+  --line: #e1d9c8;
+
+  --child-bg: #fffbf2;
+  --sun: #ffc94d;
+  --child-sky: #7ec4dd;
+  --leaf: #8fcb8a;
+  --storm: #8e8fb0;
+}
+
+@theme inline {
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-fraunces);
+  --font-playful: var(--font-baloo);
+}
+
+body {
+  font-family: var(--font-inter), sans-serif;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-fraunces), serif;
+}
+
+.font-playful {
+  font-family: var(--font-baloo), var(--font-inter), sans-serif;
+}
