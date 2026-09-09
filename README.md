@@ -10,8 +10,20 @@ MVP приложения «Компас» — ежедневный эмоцио�
 
 ## Стек
 
-Next.js (App Router, Server Actions) + TypeScript + Tailwind CSS + SQLite (better-sqlite3).
-База хранится локально в `data/kompas.db` (не коммитится).
+Next.js (App Router, Server Actions) + TypeScript + Tailwind CSS + SQLite через `@libsql/client`.
+По умолчанию база хранится локально в `data/kompas.db` (не коммитится).
+
+## Деплой (Vercel + Turso)
+
+Локальный файл SQLite не переживает бессерверные функции Vercel. Для постоянного
+хранения данных подключите бесплатную базу Turso (libSQL) и добавьте в
+Environment Variables проекта на Vercel:
+
+- `TURSO_DATABASE_URL` — вида `libsql://...`
+- `TURSO_AUTH_TOKEN` — токен доступа к базе
+
+Без этих переменных сайт всё равно работает, но данные не переживают холодный
+старт функции — годится только для демонстрации интерфейса.
 
 ## Запуск
 
