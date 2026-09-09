@@ -65,11 +65,11 @@ export default function Checkin1217({ childName }: { childName: string }) {
 
   return (
     <div className="flex-1 px-5 py-6 max-w-md mx-auto w-full">
-      <h1 className="text-2xl font-semibold text-[var(--brand-dark)] mb-6 text-center">
+      <h1 className="text-2xl font-display font-semibold text-[var(--brand-dark)] mb-6 text-center">
         Как ты сегодня?
       </h1>
 
-      <div className="bg-white border border-[var(--line)] rounded-3xl p-4 mb-5">
+      <div className="card-duo p-4 mb-5">
         <div className="grid grid-cols-7 gap-1">
           {[1, 2, 3, 4, 5, 6, 7].map((v) => (
             <button
@@ -110,15 +110,16 @@ export default function Checkin1217({ childName }: { childName: string }) {
 
       <button
         onClick={() => setShowBreathing(true)}
-        className="w-full bg-white border border-[var(--line)] rounded-2xl px-4 py-3 text-left mb-5"
+        className="w-full bg-white border-2 border-[var(--line)] rounded-2xl px-4 py-3 text-left mb-5 active:translate-y-1 transition-transform"
+        style={{ boxShadow: "0 3px 0 var(--line)" }}
       >
         <span className="block font-medium text-sm text-[var(--brand-dark)]">Подыши со мной</span>
         <span className="block text-xs text-[#6E6659]">1 минута, чтобы снизить накал</span>
       </button>
 
       {biweeklyDue && !reportDone && (
-        <div className="bg-white border border-[var(--line)] rounded-3xl p-4">
-          <h3 className="font-medium text-base text-[var(--brand-dark)] mb-3">
+        <div className="card-duo p-4">
+          <h3 className="font-display font-medium text-base text-[var(--brand-dark)] mb-3">
             Короткий отчёт за две недели
           </h3>
 
@@ -128,13 +129,15 @@ export default function Checkin1217({ childName }: { childName: string }) {
               <div className="flex gap-3">
                 <button
                   onClick={() => answerGatekeeper(false)}
-                  className="flex-1 py-3 rounded-xl bg-[#EFF4E9] text-[var(--brand-dark)] font-medium"
+                  className="btn-duo flex-1 py-3"
+                  style={{ background: "#EFF4E9", color: "var(--brand-dark)", boxShadow: "0 4px 0 var(--sage-dark)" }}
                 >
                   Нет
                 </button>
                 <button
                   onClick={() => answerGatekeeper(true)}
-                  className="flex-1 py-3 rounded-xl bg-[#FBEAE0] text-[#8A4A2A] font-medium"
+                  className="btn-duo flex-1 py-3"
+                  style={{ background: "#FBEAE0", color: "#8A4A2A", boxShadow: "0 4px 0 #E8C3A6" }}
                 >
                   Да
                 </button>
@@ -167,7 +170,7 @@ export default function Checkin1217({ childName }: { childName: string }) {
               <button
                 onClick={submitDomains}
                 disabled={Object.keys(domainScores).length < BIWEEKLY_DOMAINS_12_17.length}
-                className="w-full py-3 rounded-xl bg-[var(--brand)] text-white font-medium disabled:opacity-50"
+                className="btn-duo btn-duo-primary w-full py-3"
               >
                 Отправить
               </button>

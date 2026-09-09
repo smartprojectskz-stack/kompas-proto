@@ -31,7 +31,7 @@ export default function WeeklyObservationForm({
   return (
     <div className="fixed inset-0 bg-black/40 flex items-end md:items-center justify-center z-30 px-4">
       <div className="bg-white w-full max-w-md rounded-3xl p-6 max-h-[85vh] overflow-y-auto">
-        <h3 className="text-lg font-semibold text-[var(--brand-dark)] mb-1">
+        <h3 className="text-lg font-display font-semibold text-[var(--brand-dark)] mb-1">
           Еженедельное наблюдение
         </h3>
         <p className="text-xs text-[#8C8577] mb-4">
@@ -61,16 +61,13 @@ export default function WeeklyObservationForm({
           ))}
         </div>
         <div className="flex gap-3 mt-6">
-          <button
-            onClick={onClose}
-            className="flex-1 py-3 rounded-xl bg-white border border-[var(--line)] text-sm font-medium"
-          >
+          <button onClick={onClose} className="btn-duo btn-duo-outline flex-1 py-3 text-sm">
             Отмена
           </button>
           <button
             onClick={submit}
             disabled={!complete || submitting}
-            className="flex-1 py-3 rounded-xl bg-[var(--brand)] text-white text-sm font-medium disabled:opacity-50"
+            className="btn-duo btn-duo-primary flex-1 py-3 text-sm"
           >
             {submitting ? "Отправляем…" : "Отправить"}
           </button>

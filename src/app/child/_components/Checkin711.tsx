@@ -62,15 +62,18 @@ export default function Checkin711({ childName }: { childName: string }) {
         Привет, {childName}! Как ты сегодня?
       </h1>
 
-      <div className="bg-white border-2 border-[var(--line)] rounded-3xl p-4 mb-4">
+      <div className="card-duo p-4 mb-4">
         <div className="flex justify-between gap-2">
           {MOOD_OPTIONS_7_11.map((m) => (
             <button
               key={m.key}
               onClick={() => choose(m.key)}
-              className={`flex-1 aspect-square rounded-2xl border-2 text-2xl transition-transform active:scale-90 ${
-                selected === m.key ? "border-[var(--glow)] bg-[#FDECC7]" : "border-[var(--line)] bg-white"
-              }`}
+              className="flex-1 aspect-square rounded-2xl border-2 text-2xl transition-transform active:translate-y-1"
+              style={
+                selected === m.key
+                  ? { borderColor: "var(--glow)", background: "#FDECC7", boxShadow: "0 4px 0 var(--glow-dark)" }
+                  : { borderColor: "var(--line)", background: "#fff", boxShadow: "0 4px 0 var(--line)" }
+              }
               title={m.label}
             >
               {m.emoji}
@@ -103,7 +106,7 @@ export default function Checkin711({ childName }: { childName: string }) {
       </div>
 
       {dilemmaIdx !== null && !dilemmaDone && (
-        <div className="bg-white border-2 border-[var(--line)] rounded-3xl p-4 mb-4 font-sans">
+        <div className="card-duo p-4 mb-4 font-sans">
           <h3 className="font-playful text-base font-bold text-[var(--brand-dark)] mb-2">
             Маленькая история
           </h3>
@@ -113,7 +116,8 @@ export default function Checkin711({ childName }: { childName: string }) {
               <button
                 key={i}
                 onClick={() => chooseDilemma(opt.pattern)}
-                className="text-left bg-[#F7EEDD] border border-[var(--line)] rounded-2xl px-4 py-3"
+                className="text-left bg-[#F7EEDD] border-2 border-[var(--line)] rounded-2xl px-4 py-3 active:translate-y-1 transition-transform"
+                style={{ boxShadow: "0 3px 0 var(--line)" }}
               >
                 <span className="block font-playful font-bold text-sm text-[var(--brand-dark)]">
                   {opt.text}
@@ -132,7 +136,8 @@ export default function Checkin711({ childName }: { childName: string }) {
 
       <button
         onClick={() => setShowBreathing(true)}
-        className="w-full bg-white border-2 border-[var(--line)] rounded-2xl px-4 py-3 text-left font-sans"
+        className="w-full bg-white border-2 border-[var(--line)] rounded-2xl px-4 py-3 text-left font-sans active:translate-y-1 transition-transform"
+        style={{ boxShadow: "0 3px 0 var(--line)" }}
       >
         <span className="block font-playful font-bold text-sm text-[var(--brand-dark)]">
           Подыши со мной

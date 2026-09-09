@@ -16,6 +16,9 @@
   --child-sky: #A9BEDB;
   --leaf: #9BC08A;
   --storm: #9591B8;
+
+  --glow-dark: #C77F1F;
+  --sage-dark: #6E9260;
 }
 
 @theme inline {
@@ -34,4 +37,61 @@ h1, h2, h3 {
 
 .font-playful {
   font-family: var(--font-fredoka), var(--font-nunito), sans-serif;
+}
+
+/* Chunky, tactile "press down" buttons in the Duolingo-inspired language:
+   flat fill + a solid same-hue shadow strip that compresses on press. */
+.btn-duo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 16px;
+  font-family: var(--font-fredoka), var(--font-nunito), sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease;
+  user-select: none;
+}
+.btn-duo:active:not(:disabled) {
+  transform: translateY(3px);
+}
+.btn-duo:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.btn-duo-primary {
+  background: var(--brand);
+  color: #FFFDF8;
+  box-shadow: 0 4px 0 var(--brand-dark);
+}
+.btn-duo-primary:hover:not(:disabled) { background: #35507A; }
+.btn-duo-primary:active:not(:disabled) { box-shadow: 0 1px 0 var(--brand-dark); }
+
+.btn-duo-glow {
+  background: var(--glow);
+  color: var(--brand-dark);
+  box-shadow: 0 4px 0 var(--glow-dark);
+}
+.btn-duo-glow:hover:not(:disabled) { background: #F2B863; }
+.btn-duo-glow:active:not(:disabled) { box-shadow: 0 1px 0 var(--glow-dark); }
+
+.btn-duo-outline {
+  background: var(--panel);
+  color: var(--ink);
+  border: 2px solid var(--line);
+  box-shadow: 0 4px 0 var(--line);
+}
+.btn-duo-outline:hover:not(:disabled) { background: #FBF3E6; }
+.btn-duo-outline:active:not(:disabled) { box-shadow: 0 1px 0 var(--line); }
+
+/* Elevated, rounded card with the same tactile edge as the buttons. */
+.card-duo {
+  background: var(--panel);
+  border: 2px solid var(--line);
+  border-radius: 24px;
+  box-shadow: 0 3px 0 var(--line);
 }

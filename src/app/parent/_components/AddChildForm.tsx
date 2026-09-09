@@ -34,7 +34,7 @@ export default function AddChildForm({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 bg-black/40 flex items-end md:items-center justify-center z-30 px-4">
       <div className="bg-white w-full max-w-md rounded-3xl p-6">
-        <h3 className="text-lg font-semibold text-[var(--brand-dark)] mb-4">Добавить ребёнка</h3>
+        <h3 className="text-lg font-display font-semibold text-[var(--brand-dark)] mb-4">Добавить ребёнка</h3>
         {error && (
           <div className="mb-3 text-sm text-[#8A4A2A] bg-[#FBEAE0] border border-[#E8C3A6] rounded-xl px-4 py-3">
             {error}
@@ -86,17 +86,10 @@ export default function AddChildForm({ onClose }: { onClose: () => void }) {
           </label>
         )}
         <div className="flex gap-3 mt-4">
-          <button
-            onClick={onClose}
-            className="flex-1 py-3 rounded-xl bg-white border border-[var(--line)] text-sm font-medium"
-          >
+          <button onClick={onClose} className="btn-duo btn-duo-outline flex-1 py-3 text-sm">
             Отмена
           </button>
-          <button
-            onClick={submit}
-            disabled={submitting}
-            className="flex-1 py-3 rounded-xl bg-[var(--brand)] text-white text-sm font-medium disabled:opacity-50"
-          >
+          <button onClick={submit} disabled={submitting} className="btn-duo btn-duo-primary flex-1 py-3 text-sm">
             {submitting ? "Добавляем…" : "Добавить"}
           </button>
         </div>

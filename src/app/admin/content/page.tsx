@@ -15,7 +15,7 @@ export default async function AdminContentPage() {
     <div className="flex-1 flex flex-col min-h-screen bg-[var(--bg)]">
       <AdminTopBar active="content" />
       <div className="max-w-2xl mx-auto w-full px-4 py-6">
-        <div className="bg-white border border-[var(--line)] rounded-2xl p-4 mb-4">
+        <div className="card-duo p-4 mb-4">
           <h3 className="text-sm font-medium mb-1">Библиотека рекомендаций</h3>
           <p className="text-xs text-[#8C8577]">
             3 возрастные шкалы · {ADVICE_LIBRARY.length} рекомендаций · версия MVP
@@ -24,7 +24,7 @@ export default async function AdminContentPage() {
 
         <div className="flex flex-col gap-3">
           {ADVICE_LIBRARY.map((item) => (
-            <div key={item.title} className="bg-white border border-[var(--line)] rounded-2xl p-4">
+            <div key={item.title} className="card-duo p-4">
               <div className="flex justify-between items-start gap-2 mb-1">
                 <b className="text-sm">{item.title}</b>
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#F7EEDD] text-[#6E6659] whitespace-nowrap">

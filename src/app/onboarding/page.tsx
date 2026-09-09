@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createFamilyAction, type OnboardingChildInput } from "@/lib/actions/onboarding";
 import { calcAgeGroup, AGE_GROUP_LABEL } from "@/lib/ageGroup";
+import FireflyMascot from "@/components/FireflyMascot";
 
 const AVATARS = ["🙂", "🦊", "🐼", "🐸", "🦄", "🐨", "🐯", "🐰"];
 
@@ -82,17 +83,21 @@ export default function OnboardingPage() {
     return (
       <main className="flex-1 flex items-center justify-center px-6 py-16">
         <div className="max-w-md w-full text-center">
-          <div className="text-5xl mb-4">🎉</div>
-          <h1 className="text-2xl font-semibold text-[var(--brand-dark)] mb-3">Семья создана</h1>
+          <div className="flex justify-center mb-2">
+            <FireflyMascot size={128} />
+          </div>
+          <h1 className="text-2xl font-display font-semibold text-[var(--brand-dark)] mb-3">
+            Семья создана
+          </h1>
           <p className="text-sm text-[#6E6659] mb-6">
             Сохраните код семьи — он понадобится для входа с других устройств и детям.
           </p>
-          <div className="text-4xl font-semibold tracking-[0.3em] text-[var(--brand)] bg-white border border-[var(--line)] rounded-2xl py-6 mb-8">
+          <div className="text-4xl font-display font-semibold tracking-[0.3em] text-[var(--brand)] card-duo py-6 mb-8">
             {familyCode}
           </div>
           <button
             onClick={() => router.push("/parent")}
-            className="w-full py-4 rounded-2xl bg-[var(--brand)] text-white font-medium hover:bg-[var(--brand-dark)] transition-colors"
+            className="btn-duo btn-duo-primary w-full py-4"
           >
             Перейти в дашборд родителя
           </button>
@@ -104,7 +109,7 @@ export default function OnboardingPage() {
   return (
     <main className="flex-1 px-6 py-10">
       <div className="max-w-md mx-auto w-full">
-        <h1 className="text-2xl font-semibold text-[var(--brand-dark)] mb-1">Создание семьи</h1>
+        <h1 className="text-2xl font-display font-semibold text-[var(--brand-dark)] mb-1">Создание семьи</h1>
         <p className="text-sm text-[#8C8577] mb-6">Шаг {step} из 2</p>
 
         {error && (
@@ -151,10 +156,7 @@ export default function OnboardingPage() {
                 placeholder="••••"
               />
             </Field>
-            <button
-              onClick={goStep2}
-              className="mt-2 w-full py-4 rounded-2xl bg-[var(--brand)] text-white font-medium hover:bg-[var(--brand-dark)] transition-colors"
-            >
+            <button onClick={goStep2} className="btn-duo btn-duo-primary mt-2 w-full py-4">
               Далее
             </button>
           </div>
@@ -165,7 +167,7 @@ export default function OnboardingPage() {
             {children.map((c, idx) => {
               const group = c.birthDate ? calcAgeGroup(c.birthDate) : null;
               return (
-                <div key={c.id} className="bg-white border border-[var(--line)] rounded-2xl p-4">
+                <div key={c.id} className="card-duo p-4">
                   <div className="flex justify-between items-center mb-3">
                     <span className="text-sm font-medium">Ребёнок {idx + 1}</span>
                     {children.length > 1 && (
@@ -235,22 +237,19 @@ export default function OnboardingPage() {
 
             <button
               onClick={addChild}
-              className="w-full py-3 rounded-2xl border border-dashed border-[var(--line)] text-sm text-[var(--brand)]"
+              className="w-full py-3 rounded-2xl border-2 border-dashed border-[var(--line)] text-sm font-medium text-[var(--brand)]"
             >
               + Добавить ещё ребёнка
             </button>
 
             <div className="flex gap-3 mt-2">
-              <button
-                onClick={() => setStep(1)}
-                className="flex-1 py-4 rounded-2xl bg-white border border-[var(--line)] font-medium"
-              >
+              <button onClick={() => setStep(1)} className="btn-duo btn-duo-outline flex-1 py-4">
                 Назад
               </button>
               <button
                 onClick={submit}
                 disabled={submitting}
-                className="flex-1 py-4 rounded-2xl bg-[var(--brand)] text-white font-medium hover:bg-[var(--brand-dark)] transition-colors disabled:opacity-60"
+                className="btn-duo btn-duo-primary flex-1 py-4"
               >
                 {submitting ? "Создаём…" : "Создать семью"}
               </button>

@@ -26,7 +26,7 @@ export default function AdminLoginPage() {
   return (
     <main className="flex-1 flex items-center justify-center px-6 py-16">
       <div className="max-w-sm w-full">
-        <h1 className="text-2xl font-semibold text-[var(--brand-dark)] mb-6 text-center">
+        <h1 className="text-2xl font-display font-semibold text-[var(--brand-dark)] mb-6 text-center">
           Вход администратора
         </h1>
         {error && (
@@ -53,11 +53,7 @@ export default function AdminLoginPage() {
               onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 4))}
             />
           </label>
-          <button
-            onClick={submit}
-            disabled={loading}
-            className="w-full py-4 rounded-2xl bg-[var(--brand-dark)] text-white font-medium disabled:opacity-60"
-          >
+          <button onClick={submit} disabled={loading} className="btn-duo btn-duo-primary w-full py-4">
             {loading ? "Входим…" : "Войти"}
           </button>
         </div>

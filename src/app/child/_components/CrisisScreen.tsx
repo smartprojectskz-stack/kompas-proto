@@ -4,7 +4,7 @@ export default function CrisisScreen() {
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-6 py-10 text-center">
       <div className="text-5xl mb-4">💙</div>
-      <h2 className="text-xl font-semibold text-[var(--brand-dark)] mb-3">
+      <h2 className="text-xl font-display font-semibold text-[var(--brand-dark)] mb-3">
         Спасибо, что сказал(а) честно
       </h2>
       <p className="text-sm text-[#6E6659] max-w-sm mb-6 leading-relaxed">

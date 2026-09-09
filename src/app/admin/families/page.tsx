@@ -36,7 +36,7 @@ export default async function AdminFamiliesPage({
           />
         </form>
 
-        <div className="bg-white border border-[var(--line)] rounded-2xl p-4 mb-4">
+        <div className="card-duo p-4 mb-4">
           <h3 className="text-sm font-medium mb-3">Семьи ({families.length})</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -72,7 +72,7 @@ export default async function AdminFamiliesPage({
           </div>
         </div>
 
-        <div className="bg-white border border-[var(--line)] rounded-2xl p-4">
+        <div className="card-duo p-4">
           <h3 className="text-sm font-medium mb-3">Дети ({children.length})</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">

@@ -24,8 +24,8 @@ export default async function AdminOverviewPage() {
           <StatBox num={String(stats.openAlertsCount)} label="сигнала риска" />
         </div>
 
-        <div className="bg-white border border-[var(--line)] rounded-2xl p-4">
-          <h3 className="text-sm font-medium mb-3">Очередь сигналов риска</h3>
+        <div className="card-duo p-4">
+          <h3 className="text-sm font-display font-medium mb-3">Очередь сигналов риска</h3>
           <RiskQueue alerts={alerts} />
         </div>
       </div>
@@ -35,7 +35,7 @@ export default async function AdminOverviewPage() {
 
 function StatBox({ num, label }: { num: string; label: string }) {
   return (
-    <div className="bg-white border border-[var(--line)] rounded-xl p-3 text-center">
+    <div className="bg-white border-2 border-[var(--line)] rounded-xl p-3 text-center">
       <div className="font-display text-xl text-[var(--brand-dark)] leading-tight">{num}</div>
       <div className="text-[11px] text-[#8C8577] mt-1">{label}</div>
     </div>

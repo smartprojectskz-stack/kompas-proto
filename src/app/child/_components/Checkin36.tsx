@@ -62,8 +62,11 @@ export default function Checkin36({ childName }: { childName: string }) {
               <button
                 key={w.key}
                 onClick={() => choose(w.key)}
-                className="rounded-[28px] flex items-center justify-center text-6xl shadow-[0_4px_0_rgba(0,0,0,0.08)] active:scale-95 transition-transform"
-                style={{ background: weatherButtonColor(w.key) }}
+                className="rounded-[28px] flex items-center justify-center text-6xl active:translate-y-1 transition-transform"
+                style={{
+                  background: weatherButtonColor(w.key),
+                  boxShadow: `0 5px 0 ${weatherShadowColor(w.key)}`,
+                }}
               >
                 {w.emoji}
               </button>
@@ -102,5 +105,20 @@ function weatherButtonColor(key: string): string {
       return "var(--storm)";
     default:
       return "#FFFDF8";
+  }
+}
+
+function weatherShadowColor(key: string): string {
+  switch (key) {
+    case "sun":
+      return "var(--glow-dark)";
+    case "cloud":
+      return "#7C93B5";
+    case "rainbow":
+      return "var(--sage-dark)";
+    case "storm":
+      return "#6E699A";
+    default:
+      return "#E6D9BE";
   }
 }

@@ -90,7 +90,7 @@ export default function LoginPage() {
   return (
     <main className="flex-1 flex flex-col items-center justify-center px-6 py-16">
       <div className="max-w-md w-full">
-        <h1 className="text-2xl font-semibold text-[var(--brand-dark)] mb-6 text-center">Вход</h1>
+        <h1 className="text-2xl font-display font-semibold text-[var(--brand-dark)] mb-6 text-center">Вход</h1>
 
         {error && (
           <div className="mb-4 text-sm text-[#8A4A2A] bg-[#FBEAE0] border border-[#E8C3A6] rounded-xl px-4 py-3">
@@ -110,11 +110,7 @@ export default function LoginPage() {
                 placeholder="ABC123"
               />
             </label>
-            <button
-              onClick={submitCode}
-              disabled={loading}
-              className="w-full py-4 rounded-2xl bg-[var(--brand)] text-white font-medium hover:bg-[var(--brand-dark)] disabled:opacity-60"
-            >
+            <button onClick={submitCode} disabled={loading} className="btn-duo btn-duo-primary w-full py-4">
               {loading ? "Ищем…" : "Продолжить"}
             </button>
           </div>
@@ -127,7 +123,7 @@ export default function LoginPage() {
               <button
                 key={p.id}
                 onClick={() => selectParent(p)}
-                className="flex items-center gap-3 bg-white border border-[var(--line)] rounded-2xl px-4 py-3 text-left hover:border-[var(--brand)]"
+                className="card-duo flex items-center gap-3 px-4 py-3 text-left hover:border-[var(--brand)]"
               >
                 <span className="text-2xl">👤</span>
                 <span>
@@ -140,7 +136,7 @@ export default function LoginPage() {
               <button
                 key={c.id}
                 onClick={() => selectChild(c)}
-                className="flex items-center gap-3 bg-white border border-[var(--line)] rounded-2xl px-4 py-3 text-left hover:border-[var(--brand)]"
+                className="card-duo flex items-center gap-3 px-4 py-3 text-left hover:border-[var(--brand)]"
               >
                 <span className="text-2xl">{c.avatar}</span>
                 <span>
@@ -175,11 +171,7 @@ export default function LoginPage() {
               onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 4))}
               placeholder="••••"
             />
-            <button
-              onClick={submitPin}
-              disabled={loading}
-              className="w-full py-4 rounded-2xl bg-[var(--brand)] text-white font-medium hover:bg-[var(--brand-dark)] disabled:opacity-60"
-            >
+            <button onClick={submitPin} disabled={loading} className="btn-duo btn-duo-primary w-full py-4">
               {loading ? "Входим…" : "Войти"}
             </button>
             <button onClick={() => setSelected(null)} className="text-xs text-[#8C8577] underline">

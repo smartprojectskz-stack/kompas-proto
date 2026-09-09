@@ -27,10 +27,7 @@ export default function BreathingPractice({ onClose }: { onClose: () => void }) 
           {phase === "in" ? "Вдох…" : "Выдох…"}
         </p>
         <p className="text-xs text-[#8C8577] mt-2 mb-6">Дыши вместе с кругом ещё немного</p>
-        <button
-          onClick={onClose}
-          className="w-full py-3 rounded-xl bg-[var(--brand)] text-white text-sm font-medium"
-        >
+        <button onClick={onClose} className="btn-duo btn-duo-primary w-full py-3 text-sm">
           Готово
         </button>
       </div>
