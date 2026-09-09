@@ -11,8 +11,8 @@ export default async function AdminOverviewPage() {
     redirect("/admin/login");
   }
 
-  const stats = getAdminStats();
-  const alerts = getAllOpenAlerts();
+  const stats = await getAdminStats();
+  const alerts = await getAllOpenAlerts();
 
   return (
     <div className="flex-1 flex flex-col min-h-screen bg-[var(--bg)]">

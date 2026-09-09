@@ -17,8 +17,9 @@ export default async function AdminFamiliesPage({
   }
 
   const { q } = await searchParams;
-  const families = listFamilies(q);
-  const children = listChildrenWithFamily().filter(
+  const families = await listFamilies(q);
+  const allChildren = await listChildrenWithFamily();
+  const children = allChildren.filter(
     (c) => !q || c.name.toLowerCase().includes(q.toLowerCase()) || c.family_name.toLowerCase().includes(q.toLowerCase())
   );
 

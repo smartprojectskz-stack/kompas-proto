@@ -1,28 +1,28 @@
-import Database from "better-sqlite3";
+import { createClient, type InValue } from "@libsql/client";
 import path from "path";
 import fs from "fs";
 import { scryptSync, randomBytes } from "crypto";
 
-const DATA_DIR = path.join(process.cwd(), "data");
+// On Vercel (and other read-only-filesystem serverless hosts) only /tmp is writable, and it
+// isn't guaranteed to persist across invocations — set TURSO_DATABASE_URL (+ TURSO_AUTH_TOKEN)
+// to point at a real libSQL/Turso database for a persistent deployment.
+const isServerless = !!process.env.VERCEL || !!process.env.AWS_LAMBDA_FUNCTION_NAME;
+const DATA_DIR = path.join(isServerless ? "/tmp" : process.cwd(), "data");
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-
 const DB_PATH = path.join(DATA_DIR, "kompas.db");
 
+const url = process.env.TURSO_DATABASE_URL ?? `file:${DB_PATH}`;
+const authToken = process.env.TURSO_AUTH_TOKEN;
+
 declare global {
-  var __kompasDb: Database.Database | undefined;
+  var __kompasClient: ReturnType<typeof createClient> | undefined;
 }
 
-function createConnection() {
-  const db = new Database(DB_PATH);
-  db.pragma("journal_mode = WAL");
-  db.pragma("foreign_keys = ON");
-  return db;
-}
+const client =
+  global.__kompasClient ?? createClient(authToken ? { url, authToken } : { url });
+if (process.env.NODE_ENV !== "production") global.__kompasClient = client;
 
-export const db = global.__kompasDb ?? createConnection();
-if (process.env.NODE_ENV !== "production") global.__kompasDb = db;
-
-db.exec(`
+const SCHEMA_SQL = `
 CREATE TABLE IF NOT EXISTS families (
   id TEXT PRIMARY KEY,
   code TEXT UNIQUE NOT NULL,
@@ -43,61 +43,56 @@ CREATE TABLE IF NOT EXISTS children (
   family_id TEXT NOT NULL REFERENCES families(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   birth_date TEXT NOT NULL,
-  age_group TEXT NOT NULL, -- '3-6' | '7-11' | '12-17'
+  age_group TEXT NOT NULL,
   avatar TEXT NOT NULL DEFAULT '🙂',
-  pin_hash TEXT, -- only required for 12-17 (privacy)
+  pin_hash TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
--- Daily checkins, all ages. mood_key is the raw selection (weather/emoji/number).
 CREATE TABLE IF NOT EXISTS checkins (
   id TEXT PRIMARY KEY,
   child_id TEXT NOT NULL REFERENCES children(id) ON DELETE CASCADE,
-  date TEXT NOT NULL, -- YYYY-MM-DD
+  date TEXT NOT NULL,
   mood_key TEXT NOT NULL,
-  mood_value INTEGER NOT NULL, -- normalized 1-5 severity-ascending (5 = hardest)
-  note TEXT, -- private note (12-17 journal), never surfaced individually to parent
-  prompt_answer TEXT, -- 7-11 rotating question answer
+  mood_value INTEGER NOT NULL,
+  note TEXT,
+  prompt_answer TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   UNIQUE(child_id, date)
 );
 
--- 3-6: weekly parent observation checklist
 CREATE TABLE IF NOT EXISTS weekly_observations (
   id TEXT PRIMARY KEY,
   child_id TEXT NOT NULL REFERENCES children(id) ON DELETE CASCADE,
   week_start TEXT NOT NULL,
-  answers_json TEXT NOT NULL, -- {itemKey: 1-5}
+  answers_json TEXT NOT NULL,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   UNIQUE(child_id, week_start)
 );
 
--- 7-11: biweekly dilemma responses
 CREATE TABLE IF NOT EXISTS dilemma_responses (
   id TEXT PRIMARY KEY,
   child_id TEXT NOT NULL REFERENCES children(id) ON DELETE CASCADE,
   date TEXT NOT NULL,
   dilemma_key TEXT NOT NULL,
-  pattern TEXT NOT NULL, -- 'avoidance' | 'aggression' | 'assertive' | 'self_blame'
+  pattern TEXT NOT NULL,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
--- 12-17: biweekly self-report on domains
 CREATE TABLE IF NOT EXISTS biweekly_reports (
   id TEXT PRIMARY KEY,
   child_id TEXT NOT NULL REFERENCES children(id) ON DELETE CASCADE,
   period_start TEXT NOT NULL,
-  domain_scores_json TEXT NOT NULL, -- {domain: 1-5}
+  domain_scores_json TEXT NOT NULL,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   UNIQUE(child_id, period_start)
 );
 
--- 12-17: gatekeeper safety question answers
 CREATE TABLE IF NOT EXISTS gatekeeper_answers (
   id TEXT PRIMARY KEY,
   child_id TEXT NOT NULL REFERENCES children(id) ON DELETE CASCADE,
   date TEXT NOT NULL,
-  answer INTEGER NOT NULL, -- 0 = no, 1 = yes
+  answer INTEGER NOT NULL,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
@@ -105,10 +100,10 @@ CREATE TABLE IF NOT EXISTS alerts (
   id TEXT PRIMARY KEY,
   family_id TEXT NOT NULL REFERENCES families(id) ON DELETE CASCADE,
   child_id TEXT NOT NULL REFERENCES children(id) ON DELETE CASCADE,
-  type TEXT NOT NULL, -- 'gatekeeper' | 'trend' | 'pattern'
-  severity TEXT NOT NULL, -- 'critical' | 'warn'
+  type TEXT NOT NULL,
+  severity TEXT NOT NULL,
   message TEXT NOT NULL,
-  status TEXT NOT NULL DEFAULT 'open', -- 'open' | 'resolved'
+  status TEXT NOT NULL DEFAULT 'open',
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   resolved_at TEXT,
   resolved_by TEXT
@@ -124,7 +119,7 @@ CREATE TABLE IF NOT EXISTS admins (
 
 CREATE TABLE IF NOT EXISTS sessions (
   id TEXT PRIMARY KEY,
-  role TEXT NOT NULL, -- 'parent' | 'child' | 'admin'
+  role TEXT NOT NULL,
   family_id TEXT,
   parent_id TEXT,
   child_id TEXT,
@@ -132,31 +127,96 @@ CREATE TABLE IF NOT EXISTS sessions (
   expires_at TEXT NOT NULL,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
-`);
+`;
 
 // Seed a default admin account on first run so /admin/login is reachable out of the box.
-// Uses INSERT OR IGNORE + a fixed row id because multiple Next.js build/dev workers can each
-// load this module concurrently against the same on-disk database file.
-function seedDefaultAdmin() {
-  const count = (db.prepare(`SELECT COUNT(*) as c FROM admins`).get() as { c: number }).c;
+// Uses INSERT OR IGNORE + a fixed row id because multiple workers/instances can each run
+// this against the same database concurrently.
+async function seedDefaultAdmin() {
+  const rs = await client.execute(`SELECT COUNT(*) as c FROM admins`);
+  const count = Number((rs.rows[0] as unknown as { c: number | bigint }).c);
   if (count > 0) return;
   const login = "admin";
   const pin = String(Math.floor(1000 + Math.random() * 9000));
   const salt = randomBytes(16).toString("hex");
   const hash = scryptSync(pin, salt, 64).toString("hex");
   const pinHash = `${salt}:${hash}`;
-  const info = db
-    .prepare(`INSERT OR IGNORE INTO admins (id, name, login, pin_hash) VALUES (?, ?, ?, ?)`)
-    .run("seed-admin", "Администратор", login, pinHash);
-  if (info.changes === 0) return; // another worker already seeded the admin
+  const info = await client.execute({
+    sql: `INSERT OR IGNORE INTO admins (id, name, login, pin_hash) VALUES (?, ?, ?, ?)`,
+    args: ["seed-admin", "Администратор", login, pinHash],
+  });
+  if (info.rowsAffected === 0) return; // another worker already seeded the admin
   const credsPath = path.join(DATA_DIR, "admin-credentials.txt");
-  fs.writeFileSync(
-    credsPath,
-    `Логин администратора: ${login}\nPIN: ${pin}\nСоздано автоматически при первом запуске. Файл не попадает в git.\n`
+  try {
+    fs.writeFileSync(
+      credsPath,
+      `Логин администратора: ${login}\nPIN: ${pin}\nСоздано автоматически при первом запуске. Файл не попадает в git.\n`
+    );
+  } catch {
+    // read-only filesystem (e.g. some serverless hosts) — credentials still land in the log line below.
+  }
+  console.log(
+    `[kompas] Создан администратор по умолчанию. Логин: ${login}, PIN: ${pin} (см. data/admin-credentials.txt)`
   );
-  console.log(`[kompas] Создан администратор по умолчанию. Логин: ${login}, PIN: ${pin} (см. data/admin-credentials.txt)`);
 }
 
-seedDefaultAdmin();
+let ready: Promise<void> | undefined;
+function ensureReady(): Promise<void> {
+  if (!ready) {
+    ready = (async () => {
+      await client.executeMultiple(SCHEMA_SQL);
+      await seedDefaultAdmin();
+    })();
+  }
+  return ready;
+}
 
-export default db;
+// libSQL rows come back as null-prototype, non-enumerable-index objects — fine for our own
+// code, but React Server Components refuse to pass them as props to Client Components
+// ("Only plain objects... are supported"). Spreading into a fresh object fixes that.
+function toPlainRow<T>(row: unknown): T {
+  return { ...(row as Record<string, unknown>) } as T;
+}
+
+export async function dbGet<T = Record<string, unknown>>(
+  sql: string,
+  args: InValue[] = []
+): Promise<T | undefined> {
+  await ensureReady();
+  const rs = await client.execute({ sql, args });
+  return rs.rows[0] ? toPlainRow<T>(rs.rows[0]) : undefined;
+}
+
+export async function dbAll<T = Record<string, unknown>>(
+  sql: string,
+  args: InValue[] = []
+): Promise<T[]> {
+  await ensureReady();
+  const rs = await client.execute({ sql, args });
+  return rs.rows.map((row) => toPlainRow<T>(row));
+}
+
+export interface RunResult {
+  changes: number;
+  lastInsertRowid: bigint | undefined;
+}
+
+export async function dbRun(sql: string, args: InValue[] = []): Promise<RunResult> {
+  await ensureReady();
+  const rs = await client.execute({ sql, args });
+  return { changes: Number(rs.rowsAffected), lastInsertRowid: rs.lastInsertRowid };
+}
+
+export interface BatchStatement {
+  sql: string;
+  args?: InValue[];
+}
+
+/** Runs statements as a single atomic transaction. */
+export async function dbBatch(statements: BatchStatement[]): Promise<void> {
+  await ensureReady();
+  await client.batch(
+    statements.map((s) => ({ sql: s.sql, args: s.args ?? [] })),
+    "write"
+  );
+}

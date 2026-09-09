@@ -1,6 +1,6 @@
 "use server";
 
-import { db } from "@/lib/db";
+import { dbGet, dbAll } from "@/lib/db";
 import { verifyPin, createParentSession, createChildSession, createAdminSession } from "@/lib/auth";
 import type { Family, Parent, Child } from "@/lib/types";
 
@@ -12,20 +12,16 @@ export interface FamilyMembers {
 
 export async function lookupFamilyAction(code: string): Promise<FamilyMembers | null> {
   const normalized = code.trim().toUpperCase();
-  const family = db.prepare(`SELECT * FROM families WHERE code = ?`).get(normalized) as
-    | Family
-    | undefined;
+  const family = await dbGet<Family>(`SELECT * FROM families WHERE code = ?`, [normalized]);
   if (!family) return null;
-  const parents = db
-    .prepare(`SELECT id, name FROM parents WHERE family_id = ?`)
-    .all(family.id) as { id: string; name: string }[];
-  const children = (
-    db
-      .prepare(`SELECT id, name, avatar, age_group, pin_hash FROM children WHERE family_id = ?`)
-      .all(family.id) as (Pick<Child, "id" | "name" | "avatar" | "age_group"> & {
-      pin_hash: string | null;
-    })[]
-  ).map((c) => ({
+  const parents = await dbAll<{ id: string; name: string }>(
+    `SELECT id, name FROM parents WHERE family_id = ?`,
+    [family.id]
+  );
+  const childrenRows = await dbAll<
+    Pick<Child, "id" | "name" | "avatar" | "age_group"> & { pin_hash: string | null }
+  >(`SELECT id, name, avatar, age_group, pin_hash FROM children WHERE family_id = ?`, [family.id]);
+  const children = childrenRows.map((c) => ({
     id: c.id,
     name: c.name,
     avatar: c.avatar,
@@ -45,9 +41,7 @@ export interface LoginResult {
 }
 
 export async function parentLoginAction(parentId: string, pin: string): Promise<LoginResult> {
-  const parent = db.prepare(`SELECT * FROM parents WHERE id = ?`).get(parentId) as
-    | Parent
-    | undefined;
+  const parent = await dbGet<Parent>(`SELECT * FROM parents WHERE id = ?`, [parentId]);
   if (!parent || !verifyPin(pin, parent.pin_hash)) {
     return { ok: false, error: "Неверный PIN" };
   }
@@ -56,9 +50,7 @@ export async function parentLoginAction(parentId: string, pin: string): Promise<
 }
 
 export async function childLoginAction(childId: string, pin?: string): Promise<LoginResult> {
-  const child = db.prepare(`SELECT * FROM children WHERE id = ?`).get(childId) as
-    | Child
-    | undefined;
+  const child = await dbGet<Child>(`SELECT * FROM children WHERE id = ?`, [childId]);
   if (!child) return { ok: false, error: "Профиль не найден" };
   if (child.pin_hash) {
     if (!pin || !verifyPin(pin, child.pin_hash)) {
@@ -70,9 +62,10 @@ export async function childLoginAction(childId: string, pin?: string): Promise<L
 }
 
 export async function adminLoginAction(login: string, pin: string): Promise<LoginResult> {
-  const admin = db.prepare(`SELECT * FROM admins WHERE login = ?`).get(login.trim()) as
-    | { id: string; login: string; pin_hash: string }
-    | undefined;
+  const admin = await dbGet<{ id: string; login: string; pin_hash: string }>(
+    `SELECT * FROM admins WHERE login = ?`,
+    [login.trim()]
+  );
   if (!admin || !verifyPin(pin, admin.pin_hash)) {
     return { ok: false, error: "Неверный логин или PIN" };
   }

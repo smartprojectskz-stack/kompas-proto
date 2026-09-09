@@ -2,7 +2,7 @@
 
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
-import { db } from "@/lib/db";
+import { dbGet, dbRun } from "@/lib/db";
 import { requireChild } from "@/lib/auth";
 import {
   evaluateMoodTrend,
@@ -30,30 +30,33 @@ export async function submitDailyCheckinAction(
 ): Promise<ActionResult> {
   const { child } = await requireChild();
   const date = today();
-  db.prepare(
+  await dbRun(
     `INSERT INTO checkins (id, child_id, date, mood_key, mood_value, note, prompt_answer)
      VALUES (?, ?, ?, ?, ?, ?, ?)
      ON CONFLICT(child_id, date) DO UPDATE SET mood_key = excluded.mood_key, mood_value = excluded.mood_value,
-       note = excluded.note, prompt_answer = excluded.prompt_answer`
-  ).run(nanoid(16), child.id, date, moodKey, moodValue, note ?? null, promptAnswer ?? null);
+       note = excluded.note, prompt_answer = excluded.prompt_answer`,
+    [nanoid(16), child.id, date, moodKey, moodValue, note ?? null, promptAnswer ?? null]
+  );
 
-  evaluateMoodTrend(child.family_id, child.id);
+  await evaluateMoodTrend(child.family_id, child.id);
   return { ok: true };
 }
 
 export async function hasCheckedInTodayAction(): Promise<boolean> {
   const { child } = await requireChild();
-  const row = db
-    .prepare(`SELECT id FROM checkins WHERE child_id = ? AND date = ?`)
-    .get(child.id, today());
+  const row = await dbGet(`SELECT id FROM checkins WHERE child_id = ? AND date = ?`, [
+    child.id,
+    today(),
+  ]);
   return !!row;
 }
 
 export async function getTodayCheckinAction(): Promise<{ mood_key: string } | null> {
   const { child } = await requireChild();
-  const row = db
-    .prepare(`SELECT mood_key FROM checkins WHERE child_id = ? AND date = ?`)
-    .get(child.id, today()) as { mood_key: string } | undefined;
+  const row = await dbGet<{ mood_key: string }>(
+    `SELECT mood_key FROM checkins WHERE child_id = ? AND date = ?`,
+    [child.id, today()]
+  );
   return row ?? null;
 }
 
@@ -66,23 +69,24 @@ function daysSince(dateStr: string): number {
 
 export async function getDueDilemmaIndexAction(): Promise<number | null> {
   const { child } = await requireChild();
-  const last = db
-    .prepare(`SELECT date FROM dilemma_responses WHERE child_id = ? ORDER BY date DESC LIMIT 1`)
-    .get(child.id) as { date: string } | undefined;
+  const last = await dbGet<{ date: string }>(
+    `SELECT date FROM dilemma_responses WHERE child_id = ? ORDER BY date DESC LIMIT 1`,
+    [child.id]
+  );
   if (last && daysSince(last.date) < DILEMMA_INTERVAL_DAYS) return null;
-  const count = (
-    db.prepare(`SELECT COUNT(*) as c FROM dilemma_responses WHERE child_id = ?`).get(child.id) as {
-      c: number;
-    }
-  ).c;
-  return count; // used as index into DILEMMAS_7_11 (mod length) by the caller
+  const row = await dbGet<{ c: number }>(
+    `SELECT COUNT(*) as c FROM dilemma_responses WHERE child_id = ?`,
+    [child.id]
+  );
+  return Number(row?.c ?? 0); // used as index into DILEMMAS_7_11 (mod length) by the caller
 }
 
 export async function getDueBiweeklyAction(): Promise<boolean> {
   const { child } = await requireChild();
-  const last = db
-    .prepare(`SELECT period_start FROM biweekly_reports WHERE child_id = ? ORDER BY period_start DESC LIMIT 1`)
-    .get(child.id) as { period_start: string } | undefined;
+  const last = await dbGet<{ period_start: string }>(
+    `SELECT period_start FROM biweekly_reports WHERE child_id = ? ORDER BY period_start DESC LIMIT 1`,
+    [child.id]
+  );
   if (!last) return true;
   return daysSince(last.period_start) >= BIWEEKLY_INTERVAL_DAYS;
 }
@@ -93,10 +97,11 @@ export async function submitDilemmaResponseAction(
   pattern: "avoidance" | "aggression" | "assertive" | "self_blame"
 ): Promise<ActionResult> {
   const { child } = await requireChild();
-  db.prepare(
-    `INSERT INTO dilemma_responses (id, child_id, date, dilemma_key, pattern) VALUES (?, ?, ?, ?, ?)`
-  ).run(nanoid(16), child.id, today(), dilemmaKey, pattern);
-  evaluateDilemmaPattern(child.family_id, child.id);
+  await dbRun(
+    `INSERT INTO dilemma_responses (id, child_id, date, dilemma_key, pattern) VALUES (?, ?, ?, ?, ?)`,
+    [nanoid(16), child.id, today(), dilemmaKey, pattern]
+  );
+  await evaluateDilemmaPattern(child.family_id, child.id);
   return { ok: true };
 }
 
@@ -106,16 +111,18 @@ export async function submitWeeklyObservationAction(
   weekStart: string,
   answers: Record<string, number>
 ): Promise<ActionResult> {
-  const child = db.prepare(`SELECT * FROM children WHERE id = ?`).get(childId) as
-    | { id: string; family_id: string }
-    | undefined;
+  const child = await dbGet<{ id: string; family_id: string }>(
+    `SELECT * FROM children WHERE id = ?`,
+    [childId]
+  );
   if (!child) return { ok: false, error: "Ребёнок не найден" };
-  db.prepare(
+  await dbRun(
     `INSERT INTO weekly_observations (id, child_id, week_start, answers_json)
      VALUES (?, ?, ?, ?)
-     ON CONFLICT(child_id, week_start) DO UPDATE SET answers_json = excluded.answers_json`
-  ).run(nanoid(16), childId, weekStart, JSON.stringify(answers));
-  evaluateWeeklyObservation(child.family_id, childId, answers);
+     ON CONFLICT(child_id, week_start) DO UPDATE SET answers_json = excluded.answers_json`,
+    [nanoid(16), childId, weekStart, JSON.stringify(answers)]
+  );
+  await evaluateWeeklyObservation(child.family_id, childId, answers);
   revalidatePath("/parent");
   return { ok: true };
 }
@@ -126,21 +133,25 @@ export async function submitBiweeklyReportAction(
   scores: Record<string, number>
 ): Promise<ActionResult> {
   const { child } = await requireChild();
-  db.prepare(
+  await dbRun(
     `INSERT INTO biweekly_reports (id, child_id, period_start, domain_scores_json)
      VALUES (?, ?, ?, ?)
-     ON CONFLICT(child_id, period_start) DO UPDATE SET domain_scores_json = excluded.domain_scores_json`
-  ).run(nanoid(16), child.id, periodStart, JSON.stringify(scores));
-  evaluateBiweeklyReport(child.family_id, child.id, scores);
+     ON CONFLICT(child_id, period_start) DO UPDATE SET domain_scores_json = excluded.domain_scores_json`,
+    [nanoid(16), child.id, periodStart, JSON.stringify(scores)]
+  );
+  await evaluateBiweeklyReport(child.family_id, child.id, scores);
   return { ok: true };
 }
 
 /** 12-17: gatekeeper safety question. answer: 0 = no, 1 = yes. */
 export async function submitGatekeeperAnswerAction(answer: 0 | 1): Promise<ActionResult> {
   const { child } = await requireChild();
-  db.prepare(
-    `INSERT INTO gatekeeper_answers (id, child_id, date, answer) VALUES (?, ?, ?, ?)`
-  ).run(nanoid(16), child.id, today(), answer);
-  evaluateGatekeeper(child.family_id, child.id, answer);
+  await dbRun(`INSERT INTO gatekeeper_answers (id, child_id, date, answer) VALUES (?, ?, ?, ?)`, [
+    nanoid(16),
+    child.id,
+    today(),
+    answer,
+  ]);
+  await evaluateGatekeeper(child.family_id, child.id, answer);
   return { ok: true };
 }

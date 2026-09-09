@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { requireParent } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { dbGet } from "@/lib/db";
 import {
   getChildrenForFamily,
   getRecentCheckins,
@@ -29,8 +29,8 @@ export default async function ParentPage({
     redirect("/login");
   }
 
-  const family = db.prepare(`SELECT * FROM families WHERE id = ?`).get(familyId) as Family;
-  const children = getChildrenForFamily(familyId);
+  const family = await dbGet<Family>(`SELECT * FROM families WHERE id = ?`, [familyId]);
+  const children = await getChildrenForFamily(familyId);
 
   if (children.length === 0) {
     return (
@@ -48,12 +48,12 @@ export default async function ParentPage({
   const params = await searchParams;
   const selectedChild = children.find((c) => c.id === params.child) ?? children[0];
 
-  const checkins = getRecentCheckins(selectedChild.id, 14);
-  const alerts = getOpenAlertsForChild(selectedChild.id);
-  const dominantDomain = getDominantDomain(selectedChild);
+  const checkins = await getRecentCheckins(selectedChild.id, 14);
+  const alerts = await getOpenAlertsForChild(selectedChild.id);
+  const dominantDomain = await getDominantDomain(selectedChild);
   const recommendations = getRecommendations(dominantDomain, selectedChild.age_group, 3);
   const weekStart = getCurrentWeekStart();
-  const weeklyObservationDone = !!getWeeklyObservationForWeek(selectedChild.id, weekStart);
+  const weeklyObservationDone = !!(await getWeeklyObservationForWeek(selectedChild.id, weekStart));
 
   const moodPoints = [...checkins]
     .sort((a, b) => a.date.localeCompare(b.date))
@@ -72,8 +72,8 @@ export default async function ParentPage({
       avatar: selectedChild.avatar,
       age_group: selectedChild.age_group,
     },
-    familyCode: family.code,
-    familyName: family.name,
+    familyCode: family!.code,
+    familyName: family!.name,
     moodPoints,
     checkinRate: getCheckinRate(checkins, 7),
     trend: getTrendDirection(checkins),

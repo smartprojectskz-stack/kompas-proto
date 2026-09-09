@@ -24,9 +24,9 @@ const REPORT_DOMAIN_MAP: Record<string, Domain> = {
   social: "social",
 };
 
-export function getDominantDomain(child: Child): Domain | null {
+export async function getDominantDomain(child: Child): Promise<Domain | null> {
   if (child.age_group === "3-6") {
-    const week = getWeeklyObservationForWeek(child.id, getCurrentWeekStart());
+    const week = await getWeeklyObservationForWeek(child.id, getCurrentWeekStart());
     if (!week) return null;
     const answers = JSON.parse(week.answers_json) as Record<string, number>;
     let maxKey: string | null = null;
@@ -42,21 +42,21 @@ export function getDominantDomain(child: Child): Domain | null {
   }
 
   if (child.age_group === "7-11") {
-    const patterns = getMostRecentDilemmaPattern(child.id, 5);
+    const patterns = await getMostRecentDilemmaPattern(child.id, 5);
     if (patterns.length >= 3) {
       const concerning = patterns.filter(
         (p) => p.pattern === "avoidance" || p.pattern === "self_blame"
       ).length;
       if (concerning / patterns.length >= 0.5) return "social";
     }
-    const checkins = getRecentCheckins(child.id, 7);
+    const checkins = await getRecentCheckins(child.id, 7);
     const hard = checkins.filter((c) => c.mood_value >= 4).length;
     if (hard >= 3) return "anxiety";
     return null;
   }
 
   // 12-17
-  const report = getMostRecentBiweeklyReport(child.id);
+  const report = await getMostRecentBiweeklyReport(child.id);
   if (!report) return null;
   const scores = JSON.parse(report.domain_scores_json) as Record<string, number>;
   let maxKey: string | null = null;

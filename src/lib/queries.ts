@@ -1,69 +1,69 @@
-import { db } from "./db";
+import { dbGet, dbAll } from "./db";
 import type { Child, Checkin, Alert } from "./types";
 
-export function getChildrenForFamily(familyId: string): Child[] {
-  return db
-    .prepare(`SELECT * FROM children WHERE family_id = ? ORDER BY created_at ASC`)
-    .all(familyId) as Child[];
+export async function getChildrenForFamily(familyId: string): Promise<Child[]> {
+  return dbAll<Child>(`SELECT * FROM children WHERE family_id = ? ORDER BY created_at ASC`, [
+    familyId,
+  ]);
 }
 
-export function getChildById(childId: string): Child | undefined {
-  return db.prepare(`SELECT * FROM children WHERE id = ?`).get(childId) as Child | undefined;
+export async function getChildById(childId: string): Promise<Child | undefined> {
+  return dbGet<Child>(`SELECT * FROM children WHERE id = ?`, [childId]);
 }
 
-export function getRecentCheckins(childId: string, days = 14): Checkin[] {
-  return db
-    .prepare(
-      `SELECT * FROM checkins WHERE child_id = ? ORDER BY date DESC LIMIT ?`
-    )
-    .all(childId, days) as Checkin[];
+export async function getRecentCheckins(childId: string, days = 14): Promise<Checkin[]> {
+  return dbAll<Checkin>(`SELECT * FROM checkins WHERE child_id = ? ORDER BY date DESC LIMIT ?`, [
+    childId,
+    days,
+  ]);
 }
 
-export function getOpenAlertsForChild(childId: string): Alert[] {
-  return db
-    .prepare(`SELECT * FROM alerts WHERE child_id = ? AND status = 'open' ORDER BY created_at DESC`)
-    .all(childId) as Alert[];
+export async function getOpenAlertsForChild(childId: string): Promise<Alert[]> {
+  return dbAll<Alert>(
+    `SELECT * FROM alerts WHERE child_id = ? AND status = 'open' ORDER BY created_at DESC`,
+    [childId]
+  );
 }
 
-export function getOpenAlertsForFamily(familyId: string): Alert[] {
-  return db
-    .prepare(`SELECT * FROM alerts WHERE family_id = ? AND status = 'open' ORDER BY created_at DESC`)
-    .all(familyId) as Alert[];
+export async function getOpenAlertsForFamily(familyId: string): Promise<Alert[]> {
+  return dbAll<Alert>(
+    `SELECT * FROM alerts WHERE family_id = ? AND status = 'open' ORDER BY created_at DESC`,
+    [familyId]
+  );
 }
 
-export function getAllOpenAlerts(): (Alert & { child_name: string; family_name: string })[] {
-  return db
-    .prepare(
-      `SELECT alerts.*, children.name as child_name, families.name as family_name
-       FROM alerts
-       JOIN children ON children.id = alerts.child_id
-       JOIN families ON families.id = alerts.family_id
-       WHERE alerts.status = 'open'
-       ORDER BY CASE alerts.severity WHEN 'critical' THEN 0 ELSE 1 END, alerts.created_at DESC`
-    )
-    .all() as (Alert & { child_name: string; family_name: string })[];
+export async function getAllOpenAlerts(): Promise<
+  (Alert & { child_name: string; family_name: string })[]
+> {
+  return dbAll(
+    `SELECT alerts.*, children.name as child_name, families.name as family_name
+     FROM alerts
+     JOIN children ON children.id = alerts.child_id
+     JOIN families ON families.id = alerts.family_id
+     WHERE alerts.status = 'open'
+     ORDER BY CASE alerts.severity WHEN 'critical' THEN 0 ELSE 1 END, alerts.created_at DESC`
+  );
 }
 
-export function getWeeklyObservationForWeek(childId: string, weekStart: string) {
-  return db
-    .prepare(`SELECT * FROM weekly_observations WHERE child_id = ? AND week_start = ?`)
-    .get(childId, weekStart) as { answers_json: string } | undefined;
+export async function getWeeklyObservationForWeek(childId: string, weekStart: string) {
+  return dbGet<{ answers_json: string }>(
+    `SELECT * FROM weekly_observations WHERE child_id = ? AND week_start = ?`,
+    [childId, weekStart]
+  );
 }
 
-export function getMostRecentDilemmaPattern(childId: string, limit = 5) {
-  return db
-    .prepare(
-      `SELECT pattern FROM dilemma_responses WHERE child_id = ? ORDER BY date DESC LIMIT ?`
-    )
-    .all(childId, limit) as { pattern: string }[];
+export async function getMostRecentDilemmaPattern(childId: string, limit = 5) {
+  return dbAll<{ pattern: string }>(
+    `SELECT pattern FROM dilemma_responses WHERE child_id = ? ORDER BY date DESC LIMIT ?`,
+    [childId, limit]
+  );
 }
 
-export function getMostRecentBiweeklyReport(childId: string) {
-  return db
-    .prepare(
-      `SELECT * FROM biweekly_reports WHERE child_id = ? ORDER BY period_start DESC LIMIT 1`
-    )
-    .get(childId) as { domain_scores_json: string; period_start: string } | undefined;
+export async function getMostRecentBiweeklyReport(childId: string) {
+  return dbGet<{ domain_scores_json: string; period_start: string }>(
+    `SELECT * FROM biweekly_reports WHERE child_id = ? ORDER BY period_start DESC LIMIT 1`,
+    [childId]
+  );
 }
 
 export interface AdminStats {
@@ -73,19 +73,22 @@ export interface AdminStats {
   openAlertsCount: number;
 }
 
-export function getAdminStats(): AdminStats {
-  const familiesCount = (db.prepare(`SELECT COUNT(*) as c FROM families`).get() as { c: number }).c;
-  const childrenCount = (db.prepare(`SELECT COUNT(*) as c FROM children`).get() as { c: number }).c;
-  const openAlertsCount = (
-    db.prepare(`SELECT COUNT(*) as c FROM alerts WHERE status = 'open'`).get() as { c: number }
-  ).c;
+export async function getAdminStats(): Promise<AdminStats> {
+  const familiesRow = await dbGet<{ c: number }>(`SELECT COUNT(*) as c FROM families`);
+  const childrenRow = await dbGet<{ c: number }>(`SELECT COUNT(*) as c FROM children`);
+  const openAlertsRow = await dbGet<{ c: number }>(
+    `SELECT COUNT(*) as c FROM alerts WHERE status = 'open'`
+  );
+  const familiesCount = Number(familiesRow?.c ?? 0);
+  const childrenCount = Number(childrenRow?.c ?? 0);
+  const openAlertsCount = Number(openAlertsRow?.c ?? 0);
 
   const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-  const childrenWithCheckin = (
-    db
-      .prepare(`SELECT COUNT(DISTINCT child_id) as c FROM checkins WHERE date >= ?`)
-      .get(weekAgo) as { c: number }
-  ).c;
+  const withCheckinRow = await dbGet<{ c: number }>(
+    `SELECT COUNT(DISTINCT child_id) as c FROM checkins WHERE date >= ?`,
+    [weekAgo]
+  );
+  const childrenWithCheckin = Number(withCheckinRow?.c ?? 0);
   const checkinRateThisWeek = childrenCount > 0 ? childrenWithCheckin / childrenCount : 0;
 
   return { familiesCount, childrenCount, checkinRateThisWeek, openAlertsCount };
@@ -100,27 +103,25 @@ export interface FamilyRow {
   openAlerts: number;
 }
 
-export function listFamilies(search?: string): FamilyRow[] {
-  const rows = db
-    .prepare(
-      `SELECT families.id, families.name, families.code, families.created_at,
-        (SELECT COUNT(*) FROM children WHERE children.family_id = families.id) as childCount,
-        (SELECT COUNT(*) FROM alerts WHERE alerts.family_id = families.id AND alerts.status = 'open') as openAlerts
-       FROM families ORDER BY families.created_at DESC`
-    )
-    .all() as FamilyRow[];
+export async function listFamilies(search?: string): Promise<FamilyRow[]> {
+  const rows = await dbAll<FamilyRow>(
+    `SELECT families.id, families.name, families.code, families.created_at,
+      (SELECT COUNT(*) FROM children WHERE children.family_id = families.id) as childCount,
+      (SELECT COUNT(*) FROM alerts WHERE alerts.family_id = families.id AND alerts.status = 'open') as openAlerts
+     FROM families ORDER BY families.created_at DESC`
+  );
   if (!search) return rows;
   const q = search.toLowerCase();
   return rows.filter((r) => r.name.toLowerCase().includes(q) || r.code.toLowerCase().includes(q));
 }
 
-export function listChildrenWithFamily(): (Child & { family_name: string; openAlerts: number })[] {
-  return db
-    .prepare(
-      `SELECT children.*, families.name as family_name,
-        (SELECT COUNT(*) FROM alerts WHERE alerts.child_id = children.id AND alerts.status = 'open') as openAlerts
-       FROM children JOIN families ON families.id = children.family_id
-       ORDER BY children.created_at DESC`
-    )
-    .all() as (Child & { family_name: string; openAlerts: number })[];
+export async function listChildrenWithFamily(): Promise<
+  (Child & { family_name: string; openAlerts: number })[]
+> {
+  return dbAll(
+    `SELECT children.*, families.name as family_name,
+      (SELECT COUNT(*) FROM alerts WHERE alerts.child_id = children.id AND alerts.status = 'open') as openAlerts
+     FROM children JOIN families ON families.id = children.family_id
+     ORDER BY children.created_at DESC`
+  );
 }
