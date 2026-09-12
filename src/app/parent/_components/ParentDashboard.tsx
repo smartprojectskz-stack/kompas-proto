@@ -6,6 +6,7 @@ import MoodChart, { type MoodPoint } from "./MoodChart";
 import AddChildForm from "./AddChildForm";
 import WeeklyObservationForm from "./WeeklyObservationForm";
 import PrivacyInfoModal from "./PrivacyInfoModal";
+import NotificationSettings from "./NotificationSettings";
 import {
   DOMAIN_LABEL,
   SAFETY_DISCLAIMER,
@@ -81,6 +82,8 @@ export default function ParentDashboard({ data }: { data: ParentDashboardData })
           🔒 приватность
         </button>
       </p>
+
+      <NotificationSettings />
 
       {critical && (
         <div className="mb-4 bg-[#FBEAE0] border-2 border-[#E9A387] rounded-2xl p-4">

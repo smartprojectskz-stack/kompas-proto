@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import { dbGet, dbAll, dbRun } from "./db";
+import { sendPushToFamily } from "./push";
 import type { Alert, Checkin } from "./types";
 
 async function createAlert(
@@ -20,6 +21,11 @@ async function createAlert(
      VALUES (?, ?, ?, ?, ?, ?, 'open')`,
     [nanoid(16), familyId, childId, type, severity, message]
   );
+  await sendPushToFamily(familyId, {
+    title: severity === "critical" ? "🚨 Требуется внимание" : "Светлячок заметил кое-что",
+    body: message,
+    url: "/parent",
+  });
 }
 
 /** Called immediately after a gatekeeper safety answer is recorded (12-17). */
