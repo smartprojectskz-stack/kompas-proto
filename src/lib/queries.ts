@@ -18,6 +18,15 @@ export async function getRecentCheckins(childId: string, days = 14): Promise<Che
   ]);
 }
 
+/** Total distinct days Светлячок has a check-in for this child — used for the "N days of observation" streak. */
+export async function getObservationDayCount(childId: string): Promise<number> {
+  const row = await dbGet<{ c: number }>(
+    `SELECT COUNT(DISTINCT date) as c FROM checkins WHERE child_id = ?`,
+    [childId]
+  );
+  return Number(row?.c ?? 0);
+}
+
 export async function getOpenAlertsForChild(childId: string): Promise<Alert[]> {
   return dbAll<Alert>(
     `SELECT * FROM alerts WHERE child_id = ? AND status = 'open' ORDER BY created_at DESC`,

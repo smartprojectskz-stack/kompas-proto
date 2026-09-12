@@ -5,7 +5,15 @@ import Link from "next/link";
 import MoodChart, { type MoodPoint } from "./MoodChart";
 import AddChildForm from "./AddChildForm";
 import WeeklyObservationForm from "./WeeklyObservationForm";
-import { DOMAIN_LABEL, SAFETY_DISCLAIMER, CRISIS_CONTACTS, type AdviceItem, type Domain } from "@/lib/content";
+import PrivacyInfoModal from "./PrivacyInfoModal";
+import {
+  DOMAIN_LABEL,
+  SAFETY_DISCLAIMER,
+  CRISIS_CONTACTS,
+  getConversationStarter,
+  type AdviceItem,
+  type Domain,
+} from "@/lib/content";
 import type { Alert, AgeGroup } from "@/lib/types";
 import type { TrendDirection } from "@/lib/insights";
 
@@ -34,9 +42,11 @@ export interface ParentDashboardData {
 export default function ParentDashboard({ data }: { data: ParentDashboardData }) {
   const [showAddChild, setShowAddChild] = useState(false);
   const [showWeekly, setShowWeekly] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
 
   const critical = data.alerts.find((a) => a.severity === "critical");
   const warnings = data.alerts.filter((a) => a.severity !== "critical");
+  const conversationStarter = getConversationStarter(data.selectedChild.age_group);
 
   return (
     <div className="max-w-lg mx-auto w-full px-4 py-6">
@@ -66,7 +76,10 @@ export default function ParentDashboard({ data }: { data: ParentDashboardData })
         </button>
       </div>
       <p className="text-xs text-[#8C8577] mb-5">
-        {data.familyName} · код семьи {data.familyCode}
+        {data.familyName} · код семьи {data.familyCode} ·{" "}
+        <button onClick={() => setShowPrivacy(true)} className="underline">
+          🔒 приватность
+        </button>
       </p>
 
       {critical && (
@@ -113,6 +126,11 @@ export default function ParentDashboard({ data }: { data: ParentDashboardData })
         />
       </div>
 
+      <div className="card-duo p-4 mb-4">
+        <h3 className="text-sm font-display font-medium mb-2">💬 Разговор дня</h3>
+        <p className="text-sm text-[#2E3550]">Сегодня можно спросить: «{conversationStarter}»</p>
+      </div>
+
       {data.selectedChild.age_group === "3-6" && (
         <div className="card-duo p-4 mb-4">
           <h3 className="text-sm font-display font-medium mb-2">Еженедельное наблюдение</h3>
@@ -150,6 +168,7 @@ export default function ParentDashboard({ data }: { data: ParentDashboardData })
       <p className="text-xs text-[#8C8577] text-center leading-relaxed">{SAFETY_DISCLAIMER}</p>
 
       {showAddChild && <AddChildForm onClose={() => setShowAddChild(false)} />}
+      {showPrivacy && <PrivacyInfoModal onClose={() => setShowPrivacy(false)} />}
       {showWeekly && (
         <WeeklyObservationForm
           childId={data.selectedChild.id}

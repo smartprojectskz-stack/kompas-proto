@@ -16,6 +16,7 @@ import {
 } from "@/lib/actions/checkin";
 import BreathingPractice from "./BreathingPractice";
 import CrisisScreen from "./CrisisScreen";
+import FireflyComfort from "./FireflyComfort";
 
 export default function Checkin1217({ childName }: { childName: string }) {
   void childName;
@@ -24,6 +25,7 @@ export default function Checkin1217({ childName }: { childName: string }) {
   const [submitted, setSubmitted] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [showBreathing, setShowBreathing] = useState(false);
+  const [showComfort, setShowComfort] = useState(false);
 
   const [biweeklyDue, setBiweeklyDue] = useState(false);
   const [gatekeeperAnswered, setGatekeeperAnswered] = useState(false);
@@ -45,7 +47,9 @@ export default function Checkin1217({ childName }: { childName: string }) {
   async function choose(scaleValue: number) {
     setSelected(scaleValue);
     setSubmitted(true);
-    await submitDailyCheckinAction(String(scaleValue), moodValue7to5(scaleValue), undefined, note || undefined);
+    const moodValue = moodValue7to5(scaleValue);
+    await submitDailyCheckinAction(String(scaleValue), moodValue, undefined, note || undefined);
+    if (moodValue >= 4) setShowComfort(true);
   }
 
   async function answerGatekeeper(yes: boolean) {
@@ -185,6 +189,12 @@ export default function Checkin1217({ childName }: { childName: string }) {
       )}
 
       {showBreathing && <BreathingPractice onClose={() => setShowBreathing(false)} />}
+      {showComfort && (
+        <FireflyComfort
+          onClose={() => setShowComfort(false)}
+          onOpenBreathing={() => setShowBreathing(true)}
+        />
+      )}
     </div>
   );
 }

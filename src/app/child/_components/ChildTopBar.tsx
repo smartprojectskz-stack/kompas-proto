@@ -3,22 +3,33 @@
 import { useState } from "react";
 import { logoutAction } from "@/lib/actions/logout";
 import { AGE_GROUP_LABEL } from "@/lib/ageGroup";
+import { observationStageEmoji } from "@/lib/content";
 import type { AgeGroup } from "@/lib/types";
 
 export default function ChildTopBar({
   childName,
   ageGroup,
+  observationDays,
 }: {
   childName: string;
   ageGroup: AgeGroup;
+  observationDays: number;
 }) {
   const [showInfo, setShowInfo] = useState(false);
 
   return (
     <div className="flex items-center justify-between px-4 py-3">
-      <span className="text-sm text-[#8C8577]">
-        Привет, {childName} · {AGE_GROUP_LABEL[ageGroup]}
-      </span>
+      <div>
+        <span className="text-sm text-[#8C8577] block">
+          Привет, {childName} · {AGE_GROUP_LABEL[ageGroup]}
+        </span>
+        {observationDays > 0 && (
+          <span className="text-[11px] text-[#8C8577]">
+            {observationStageEmoji(observationDays)} Светлячок наблюдает за твоими днями уже{" "}
+            {observationDays} {observationDays === 1 ? "день" : "дней"}
+          </span>
+        )}
+      </div>
       <div className="flex items-center gap-3">
         <button
           onClick={() => setShowInfo(true)}
@@ -36,10 +47,11 @@ export default function ChildTopBar({
       {showInfo && (
         <div className="fixed inset-0 bg-black/40 flex items-end justify-center z-30">
           <div className="bg-white w-full max-w-md rounded-t-3xl p-6 text-sm leading-relaxed">
-            <h3 className="text-lg font-semibold mb-3">Что видит родитель</h3>
+            <h3 className="text-lg font-display font-semibold mb-3">🔒 Твои ответы — не отчёт</h3>
             <p className="mb-2 text-[#6E6659]">
-              Ответы ребёнка попадают в дашборд родителя как сигналы динамики — без личных
-              записей и оценок.
+              Родитель видит только общую динамику — без личных записей и без каждого
+              отдельного ответа. Это не ежедневная проверка, а способ вовремя заметить,
+              если тебе тяжело.
             </p>
             {ageGroup === "12-17" && (
               <p className="mb-2 text-[#6E6659]">
@@ -49,7 +61,7 @@ export default function ChildTopBar({
             )}
             <button
               onClick={() => setShowInfo(false)}
-              className="mt-4 w-full py-3 rounded-xl bg-[var(--brand-dark)] text-white"
+              className="btn-duo btn-duo-primary mt-4 w-full py-3"
             >
               Понятно
             </button>

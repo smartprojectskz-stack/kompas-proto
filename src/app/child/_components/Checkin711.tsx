@@ -9,6 +9,7 @@ import {
   getDueDilemmaIndexAction,
 } from "@/lib/actions/checkin";
 import BreathingPractice from "./BreathingPractice";
+import FireflyComfort from "./FireflyComfort";
 
 export default function Checkin711({ childName }: { childName: string }) {
   const [selected, setSelected] = useState<string | null>(null);
@@ -16,6 +17,7 @@ export default function Checkin711({ childName }: { childName: string }) {
   const [submitted, setSubmitted] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [showBreathing, setShowBreathing] = useState(false);
+  const [showComfort, setShowComfort] = useState(false);
 
   const [dilemmaIdx, setDilemmaIdx] = useState<number | null>(null);
   const [dilemmaDone, setDilemmaDone] = useState(false);
@@ -45,6 +47,7 @@ export default function Checkin711({ childName }: { childName: string }) {
     setSelected(key);
     setSubmitted(true);
     await submitDailyCheckinAction(option.key, option.moodValue, promptAnswer || undefined);
+    if (option.moodValue >= 4) setShowComfort(true);
   }
 
   async function chooseDilemma(pattern: "avoidance" | "aggression" | "assertive" | "self_blame") {
@@ -146,6 +149,12 @@ export default function Checkin711({ childName }: { childName: string }) {
       </button>
 
       {showBreathing && <BreathingPractice onClose={() => setShowBreathing(false)} />}
+      {showComfort && (
+        <FireflyComfort
+          onClose={() => setShowComfort(false)}
+          onOpenBreathing={() => setShowBreathing(true)}
+        />
+      )}
     </div>
   );
 }

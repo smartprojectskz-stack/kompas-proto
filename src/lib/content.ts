@@ -134,5 +134,87 @@ export const CRISIS_CONTACTS: CrisisContact[] = [
   },
 ];
 
+export const CONVERSATION_STARTERS: Record<AgeGroup, string[]> = {
+  "3-6": [
+    "Что было самым весёлым сегодня?",
+    "Какого цвета было бы твоё сегодня?",
+    "Кого ты сегодня обнимал(а)?",
+  ],
+  "7-11": [
+    "Что сегодня было самым приятным моментом?",
+    "Было сегодня что-нибудь, что тебя раздражало?",
+    "С кем сегодня было интереснее всего?",
+    "Что бы ты хотел(а) переделать, если бы мог(ла)?",
+  ],
+  "12-17": [
+    "Что сегодня забрало у тебя больше всего сил?",
+    "Есть что-то, о чём ты думал(а) весь день?",
+    "Что бы тебе помогло сейчас — совет, объятия или просто побыть рядом?",
+    "Что было бы для тебя хорошим завтра?",
+  ],
+};
+
+export function getConversationStarter(ageGroup: AgeGroup, seed: number = new Date().getDate()): string {
+  const list = CONVERSATION_STARTERS[ageGroup];
+  return list[seed % list.length];
+}
+
+export interface PrivacyRow {
+  label: string;
+  parentSees: "yes" | "no" | "alert";
+}
+
+export const PRIVACY_TABLE: PrivacyRow[] = [
+  { label: "Общий эмоциональный тренд", parentSees: "yes" },
+  { label: "Количество чек-инов", parentSees: "yes" },
+  { label: "Частые темы (сон, тревога, отношения…)", parentSees: "yes" },
+  { label: "Текст личного дневника", parentSees: "no" },
+  { label: "Каждый отдельный ответ ребёнка", parentSees: "no" },
+  { label: "Сигнал о безопасности", parentSees: "alert" },
+];
+
+export const PRIVACY_INTRO =
+  "Светлячок не следит за ребёнком. Он помогает замечать изменения — не читать переписку с самим собой.";
+
+export interface ComfortOption {
+  key: string;
+  emoji: string;
+  label: string;
+  tip: string;
+}
+
+export const COMFORT_OPTIONS: ComfortOption[] = [
+  {
+    key: "breathe",
+    emoji: "🌬",
+    label: "Подышать",
+    tip: "Открываем дыхательную практику на минуту.",
+  },
+  {
+    key: "listen",
+    emoji: "🎵",
+    label: "Послушать",
+    tip: "Включи свою любимую спокойную песню и просто полежи или посиди с ней 3–5 минут.",
+  },
+  {
+    key: "distract",
+    emoji: "🧸",
+    label: "Отвлечься",
+    tip: "Порисуй, полепи или поиграй 5 минут во что-то, что нравится — не обязательно решать всё прямо сейчас.",
+  },
+  {
+    key: "talk",
+    emoji: "💬",
+    label: "Поговорить со взрослым",
+    tip: "Позови рядом взрослого, которому доверяешь, и просто скажи: «Мне сейчас тяжело».",
+  },
+];
+
+export function observationStageEmoji(days: number): string {
+  if (days >= 30) return "🌟";
+  if (days >= 7) return "✨";
+  return "🌱";
+}
+
 export const SAFETY_DISCLAIMER =
   "Это не диагностика в медицинском смысле, а инструмент наблюдения за динамикой. Приложение не заменяет консультацию психолога или психиатра.";
