@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FireflyMascot from "@/components/FireflyMascot";
 import { COMFORT_OPTIONS } from "@/lib/content";
+import { startAmbient, stopAmbient, isSoundEnabled } from "@/lib/sound";
 
 export default function FireflyComfort({
   onClose,
@@ -11,7 +12,14 @@ export default function FireflyComfort({
   onClose: () => void;
   onOpenBreathing: () => void;
 }) {
-  const [tip, setTip] = useState<string | null>(null);
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const [listening, setListening] = useState(false);
+
+  useEffect(() => {
+    return () => stopAmbient();
+  }, []);
+
+  const tip = COMFORT_OPTIONS.find((o) => o.key === selectedKey)?.tip ?? null;
 
   function choose(key: string) {
     if (key === "breathe") {
@@ -19,8 +27,26 @@ export default function FireflyComfort({
       onOpenBreathing();
       return;
     }
-    const option = COMFORT_OPTIONS.find((o) => o.key === key);
-    setTip(option?.tip ?? null);
+    setSelectedKey(key);
+    if (key === "listen" && isSoundEnabled()) {
+      startAmbient();
+      setListening(true);
+    }
+  }
+
+  function toggleListening() {
+    if (listening) {
+      stopAmbient();
+      setListening(false);
+    } else if (isSoundEnabled()) {
+      startAmbient();
+      setListening(true);
+    }
+  }
+
+  function close() {
+    stopAmbient();
+    onClose();
   }
 
   return (
@@ -48,14 +74,22 @@ export default function FireflyComfort({
                 </button>
               ))}
             </div>
-            <button onClick={onClose} className="mt-4 text-xs text-[#8C8577] underline">
+            <button onClick={close} className="mt-4 text-xs text-[#8C8577] underline">
               Не сейчас
             </button>
           </>
         ) : (
           <>
             <p className="text-sm text-[#6E6659] mb-5">{tip}</p>
-            <button onClick={onClose} className="btn-duo btn-duo-primary w-full py-3 text-sm">
+            {selectedKey === "listen" && (
+              <button
+                onClick={toggleListening}
+                className="mb-4 text-xs text-[var(--brand)] underline block w-full"
+              >
+                {listening ? "🎵 Выключить звук" : "🎵 Включить звук ещё раз"}
+              </button>
+            )}
+            <button onClick={close} className="btn-duo btn-duo-primary w-full py-3 text-sm">
               Хорошо
             </button>
           </>

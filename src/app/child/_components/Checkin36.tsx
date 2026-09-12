@@ -3,11 +3,14 @@
 import { useEffect, useState } from "react";
 import { WEATHER_OPTIONS } from "@/lib/checkinData";
 import { submitDailyCheckinAction, getTodayCheckinAction } from "@/lib/actions/checkin";
+import { getAffirmation } from "@/lib/content";
+import { playPop } from "@/lib/sound";
 
 export default function Checkin36({ childName }: { childName: string }) {
   const [selected, setSelected] = useState<string | null>(null);
   const [showResponse, setShowResponse] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const affirmation = getAffirmation("3-6");
 
   useEffect(() => {
     getTodayCheckinAction().then((row) => {
@@ -23,6 +26,7 @@ export default function Checkin36({ childName }: { childName: string }) {
 
   async function choose(key: string) {
     const option = WEATHER_OPTIONS.find((w) => w.key === key)!;
+    playPop();
     setSelected(key);
     setShowResponse(true);
     await submitDailyCheckinAction(option.key, option.moodValue);
@@ -78,9 +82,10 @@ export default function Checkin36({ childName }: { childName: string }) {
       {showResponse && current && (
         <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
           <div className="text-8xl mb-6">{current.emoji}</div>
-          <div className="font-playful text-xl font-bold text-[#463D2E] max-w-xs mb-8">
+          <div className="font-playful text-xl font-bold text-[#463D2E] max-w-xs mb-3">
             {current.response}
           </div>
+          <p className="text-sm text-[#6E6659] max-w-xs mb-8 italic">{affirmation}</p>
           <button
             onClick={() => setShowResponse(false)}
             className="rounded-full bg-white px-6 py-3 font-playful font-bold text-sm shadow-[0_3px_0_rgba(0,0,0,0.06)] text-[#463D2E]"

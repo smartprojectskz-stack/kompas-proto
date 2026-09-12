@@ -10,8 +10,12 @@ import {
 } from "@/lib/actions/checkin";
 import BreathingPractice from "./BreathingPractice";
 import FireflyComfort from "./FireflyComfort";
+import { getAffirmation, getSelfCareTip } from "@/lib/content";
+import { playPop } from "@/lib/sound";
 
 export default function Checkin711({ childName }: { childName: string }) {
+  const affirmation = useMemo(() => getAffirmation("7-11"), []);
+  const selfCareTip = useMemo(() => getSelfCareTip("7-11", new Date().getDate() + 1), []);
   const [selected, setSelected] = useState<string | null>(null);
   const [promptAnswer, setPromptAnswer] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -44,6 +48,7 @@ export default function Checkin711({ childName }: { childName: string }) {
 
   async function choose(key: string) {
     const option = MOOD_OPTIONS_7_11.find((m) => m.key === key)!;
+    playPop();
     setSelected(key);
     setSubmitted(true);
     await submitDailyCheckinAction(option.key, option.moodValue, promptAnswer || undefined);
@@ -52,6 +57,7 @@ export default function Checkin711({ childName }: { childName: string }) {
 
   async function chooseDilemma(pattern: "avoidance" | "aggression" | "assertive" | "self_blame") {
     if (dilemmaIdx === null) return;
+    playPop();
     const dilemma = DILEMMAS_7_11[dilemmaIdx];
     await submitDilemmaResponseAction(dilemma.key, pattern);
     setDilemmaDone(true);
@@ -90,8 +96,9 @@ export default function Checkin711({ childName }: { childName: string }) {
         </div>
 
         {submitted && current && (
-          <div className="mt-4 p-4 rounded-2xl bg-[#EFF4E9] text-[var(--brand-dark)] text-[15px] font-sans">
-            {current.response}
+          <div className="mt-4 p-4 rounded-2xl bg-[#EFF4E9] text-[var(--brand-dark)] font-sans">
+            <p className="text-[15px]">{current.response}</p>
+            <p className="text-sm italic mt-2 text-[#4C7A46]">{affirmation}</p>
           </div>
         )}
 
@@ -136,6 +143,11 @@ export default function Checkin711({ childName }: { childName: string }) {
           Спасибо, что поделился(ась)! 🌟
         </div>
       )}
+
+      <div className="card-duo p-4 mb-4 font-sans">
+        <h3 className="font-playful text-base font-bold text-[var(--brand-dark)] mb-1">💡 Совет дня</h3>
+        <p className="text-sm text-[#6E6659]">{selfCareTip}</p>
+      </div>
 
       <button
         onClick={() => setShowBreathing(true)}

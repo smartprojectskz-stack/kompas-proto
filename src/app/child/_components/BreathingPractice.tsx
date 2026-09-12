@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { startAmbient, stopAmbient, isSoundEnabled } from "@/lib/sound";
 
 export default function BreathingPractice({ onClose }: { onClose: () => void }) {
   const [phase, setPhase] = useState<"in" | "out">("in");
+  const [musicOn, setMusicOn] = useState(false);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -11,6 +13,25 @@ export default function BreathingPractice({ onClose }: { onClose: () => void }) 
     }, 4000);
     return () => clearInterval(id);
   }, []);
+
+  useEffect(() => {
+    return () => stopAmbient();
+  }, []);
+
+  function toggleMusic() {
+    if (musicOn) {
+      stopAmbient();
+      setMusicOn(false);
+    } else if (isSoundEnabled()) {
+      startAmbient();
+      setMusicOn(true);
+    }
+  }
+
+  function handleClose() {
+    stopAmbient();
+    onClose();
+  }
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40 px-6">
@@ -26,8 +47,14 @@ export default function BreathingPractice({ onClose }: { onClose: () => void }) 
         <p className="mt-6 font-playful text-lg font-bold text-[#463D2E]">
           {phase === "in" ? "Вдох…" : "Выдох…"}
         </p>
-        <p className="text-xs text-[#8C8577] mt-2 mb-6">Дыши вместе с кругом ещё немного</p>
-        <button onClick={onClose} className="btn-duo btn-duo-primary w-full py-3 text-sm">
+        <p className="text-xs text-[#8C8577] mt-2 mb-4">Дыши вместе с кругом ещё немного</p>
+        <button
+          onClick={toggleMusic}
+          className="mb-4 text-xs text-[var(--brand)] underline"
+        >
+          {musicOn ? "🎵 Выключить спокойный звук" : "🎵 Включить спокойный звук"}
+        </button>
+        <button onClick={handleClose} className="btn-duo btn-duo-primary w-full py-3 text-sm">
           Готово
         </button>
       </div>

@@ -1,10 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { logoutAction } from "@/lib/actions/logout";
 import { AGE_GROUP_LABEL } from "@/lib/ageGroup";
 import { observationStageEmoji } from "@/lib/content";
+import { isSoundEnabled, setSoundEnabled, subscribeSoundEnabled } from "@/lib/sound";
 import type { AgeGroup } from "@/lib/types";
+
+function useSoundEnabled() {
+  return useSyncExternalStore(subscribeSoundEnabled, isSoundEnabled, () => true);
+}
 
 export default function ChildTopBar({
   childName,
@@ -16,6 +21,11 @@ export default function ChildTopBar({
   observationDays: number;
 }) {
   const [showInfo, setShowInfo] = useState(false);
+  const soundOn = useSoundEnabled();
+
+  function toggleSound() {
+    setSoundEnabled(!soundOn);
+  }
 
   return (
     <div className="flex items-center justify-between px-4 py-3">
@@ -31,6 +41,13 @@ export default function ChildTopBar({
         )}
       </div>
       <div className="flex items-center gap-3">
+        <button
+          onClick={toggleSound}
+          title={soundOn ? "Выключить звук" : "Включить звук"}
+          className="text-base"
+        >
+          {soundOn ? "🔊" : "🔇"}
+        </button>
         <button
           onClick={() => setShowInfo(true)}
           className="text-xs text-[#8C8577] underline"

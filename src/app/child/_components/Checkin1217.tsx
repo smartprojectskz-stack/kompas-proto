@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   MOOD_SCALE_12_17_LABELS,
   moodValue7to5,
@@ -17,9 +17,13 @@ import {
 import BreathingPractice from "./BreathingPractice";
 import CrisisScreen from "./CrisisScreen";
 import FireflyComfort from "./FireflyComfort";
+import { getAffirmation, getSelfCareTip } from "@/lib/content";
+import { playPop } from "@/lib/sound";
 
 export default function Checkin1217({ childName }: { childName: string }) {
   void childName;
+  const affirmation = useMemo(() => getAffirmation("12-17"), []);
+  const selfCareTip = useMemo(() => getSelfCareTip("12-17", new Date().getDate() + 1), []);
   const [selected, setSelected] = useState<number | null>(null);
   const [note, setNote] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -45,6 +49,7 @@ export default function Checkin1217({ childName }: { childName: string }) {
   }, []);
 
   async function choose(scaleValue: number) {
+    playPop();
     setSelected(scaleValue);
     setSubmitted(true);
     const moodValue = moodValue7to5(scaleValue);
@@ -106,10 +111,16 @@ export default function Checkin1217({ childName }: { childName: string }) {
           </div>
         )}
         {submitted && (
-          <p className="mt-4 text-sm text-[var(--brand-dark)] bg-[#EFF4E9] rounded-xl p-3">
-            Спасибо, что отметил(а). Заметка остаётся только твоей.
-          </p>
+          <div className="mt-4 text-sm text-[var(--brand-dark)] bg-[#EFF4E9] rounded-xl p-3">
+            <p>Спасибо, что отметил(а). Заметка остаётся только твоей.</p>
+            <p className="italic mt-2 text-[#4C7A46]">{affirmation}</p>
+          </div>
         )}
+      </div>
+
+      <div className="card-duo p-4 mb-5">
+        <h3 className="font-display font-medium text-base text-[var(--brand-dark)] mb-1">💡 Совет дня</h3>
+        <p className="text-sm text-[#6E6659]">{selfCareTip}</p>
       </div>
 
       <button
@@ -158,7 +169,10 @@ export default function Checkin1217({ childName }: { childName: string }) {
                     {[1, 2, 3, 4, 5].map((v) => (
                       <button
                         key={v}
-                        onClick={() => setDomainScores((prev) => ({ ...prev, [d.key]: v }))}
+                        onClick={() => {
+                          playPop();
+                          setDomainScores((prev) => ({ ...prev, [d.key]: v }));
+                        }}
                         className={`flex-1 py-2 rounded-lg text-sm border-2 ${
                           domainScores[d.key] === v
                             ? "border-[var(--glow)] bg-[#FDECC7]"
