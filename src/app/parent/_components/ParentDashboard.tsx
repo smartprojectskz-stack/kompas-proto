@@ -8,6 +8,7 @@ import WeeklyObservationForm from "./WeeklyObservationForm";
 import PrivacyInfoModal from "./PrivacyInfoModal";
 import NotificationSettings from "./NotificationSettings";
 import WeekMap from "./WeekMap";
+import ParentSelfCheckin from "./ParentSelfCheckin";
 import {
   DOMAIN_LABEL,
   SAFETY_DISCLAIMER,
@@ -181,6 +182,17 @@ export default function ParentDashboard({ data }: { data: ParentDashboardData })
             </div>
           </div>
         ))}
+      </div>
+
+      <ParentSelfCheckin />
+
+      <div className="flex gap-4 justify-center mb-4 text-xs">
+        <Link href="/parent/safety" className="text-[var(--brand)] underline">
+          🛟 Центр безопасности
+        </Link>
+        <Link href="/parent/report" className="text-[var(--brand)] underline">
+          📄 Отчёт для специалиста
+        </Link>
       </div>
 
       <p className="text-xs text-[#8C8577] text-center leading-relaxed">{SAFETY_DISCLAIMER}</p>

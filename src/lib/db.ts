@@ -109,6 +109,16 @@ CREATE TABLE IF NOT EXISTS alerts (
   resolved_by TEXT
 );
 
+CREATE TABLE IF NOT EXISTS parent_checkins (
+  id TEXT PRIMARY KEY,
+  parent_id TEXT NOT NULL REFERENCES parents(id) ON DELETE CASCADE,
+  family_id TEXT NOT NULL REFERENCES families(id) ON DELETE CASCADE,
+  date TEXT NOT NULL,
+  mood_value INTEGER NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE(parent_id, date)
+);
+
 CREATE TABLE IF NOT EXISTS push_subscriptions (
   id TEXT PRIMARY KEY,
   parent_id TEXT NOT NULL REFERENCES parents(id) ON DELETE CASCADE,

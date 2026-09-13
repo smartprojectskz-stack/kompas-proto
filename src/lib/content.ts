@@ -310,5 +310,29 @@ export function observationStageEmoji(days: number): string {
   return "🌱";
 }
 
+export const PARENT_TIPS_OK: string[] = [
+  "Хорошо, что вы находите минутку на это каждый день — это тоже забота.",
+  "Ваше спокойствие — часть опоры для ребёнка. Спасибо, что заботитесь и о себе.",
+  "Маленькая передышка сейчас не помешает, даже если день был неплохим.",
+];
+
+export const PARENT_TIPS_HARD: string[] = [
+  "Тяжёлый день у родителя — это нормально. Позвольте себе не быть идеальным(ой) сегодня.",
+  "Если есть возможность — попросите о помощи или просто скажите кому-то, что вам тяжело.",
+  "Забота о ребёнке начинается с того, чтобы не забывать заботиться о себе.",
+  "Пять минут тишины сейчас — это не эгоизм, а необходимость.",
+];
+
+export function getParentTip(moodValue: number, seed: number = new Date().getDate()): string {
+  const list = moodValue >= 4 ? PARENT_TIPS_HARD : PARENT_TIPS_OK;
+  return list[seed % list.length];
+}
+
+export const ALERT_TYPE_LABEL: Record<string, string> = {
+  gatekeeper: "Сигнал безопасности",
+  trend: "Изменение тренда",
+  pattern: "Паттерн в ответах",
+};
+
 export const SAFETY_DISCLAIMER =
   "Это не диагностика в медицинском смысле, а инструмент наблюдения за динамикой. Приложение не заменяет консультацию психолога или психиатра.";

@@ -1,5 +1,5 @@
 import { dbGet, dbAll } from "./db";
-import type { Child, Checkin, Alert } from "./types";
+import type { Child, Checkin, Alert, ParentCheckin } from "./types";
 
 export async function getChildrenForFamily(familyId: string): Promise<Child[]> {
   return dbAll<Child>(`SELECT * FROM children WHERE family_id = ? ORDER BY created_at ASC`, [
@@ -39,6 +39,24 @@ export async function getOpenAlertsForFamily(familyId: string): Promise<Alert[]>
     `SELECT * FROM alerts WHERE family_id = ? AND status = 'open' ORDER BY created_at DESC`,
     [familyId]
   );
+}
+
+/** Open and resolved alerts for a child, most recent first — used by the parent-facing Safety Center. */
+export async function getAllAlertsForChild(childId: string, limit = 30): Promise<Alert[]> {
+  return dbAll<Alert>(`SELECT * FROM alerts WHERE child_id = ? ORDER BY created_at DESC LIMIT ?`, [
+    childId,
+    limit,
+  ]);
+}
+
+export async function getTodayParentCheckin(
+  parentId: string,
+  date: string
+): Promise<ParentCheckin | undefined> {
+  return dbGet<ParentCheckin>(`SELECT * FROM parent_checkins WHERE parent_id = ? AND date = ?`, [
+    parentId,
+    date,
+  ]);
 }
 
 export async function getAllOpenAlerts(): Promise<

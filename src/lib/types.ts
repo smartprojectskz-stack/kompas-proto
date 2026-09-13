@@ -52,6 +52,15 @@ export interface Alert {
   resolved_by: string | null;
 }
 
+export interface ParentCheckin {
+  id: string;
+  parent_id: string;
+  family_id: string;
+  date: string;
+  mood_value: number;
+  created_at: string;
+}
+
 export interface SessionRecord {
   id: string;
   role: Role;
