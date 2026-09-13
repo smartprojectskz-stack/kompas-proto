@@ -103,11 +103,56 @@ export const ADVICE_LIBRARY: AdviceItem[] = [
   },
 ];
 
-export function getRecommendations(domain: Domain | null, ageGroup: AgeGroup, limit = 3): AdviceItem[] {
+function seededShuffle<T>(arr: T[], seed: number): T[] {
+  const a = [...arr];
+  let s = seed;
+  for (let i = a.length - 1; i > 0; i--) {
+    s = (s * 9301 + 49297) % 233280;
+    const j = Math.floor((s / 233280) * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+export function getRecommendations(
+  domain: Domain | null,
+  ageGroup: AgeGroup,
+  limit = 3,
+  seed: number = new Date().getDate()
+): AdviceItem[] {
   const pool = ADVICE_LIBRARY.filter((a) => a.ageGroups.includes(ageGroup));
   const matched = domain ? pool.filter((a) => a.domain === domain) : [];
   const rest = pool.filter((a) => !matched.includes(a));
-  return [...matched, ...rest].slice(0, limit);
+  return [...seededShuffle(matched, seed), ...seededShuffle(rest, seed + 17)].slice(0, limit);
+}
+
+/** Mood value 1 (best) .. 5 (hardest) rendered as a weather-style icon, for the parent's week map. */
+export function moodValueEmoji(value: number): string {
+  if (value <= 1) return "☀️";
+  if (value === 2) return "🌤️";
+  if (value === 3) return "☁️";
+  if (value === 4) return "🌦️";
+  return "🌧️";
+}
+
+export function getWeekComparisonText(
+  moodChange: "better" | "worse" | "same" | "not_enough_data",
+  thisWeekCount: number,
+  lastWeekCount: number
+): string {
+  if (moodChange === "not_enough_data") {
+    return "Пока рано сравнивать — недостаточно отметок за обе недели.";
+  }
+  const countNote =
+    thisWeekCount > lastWeekCount
+      ? " Отметок стало больше, чем на прошлой неделе."
+      : thisWeekCount < lastWeekCount
+        ? " Отметок стало меньше, чем на прошлой неделе."
+        : "";
+  if (moodChange === "better") return `Эта неделя выглядит спокойнее прошлой.${countNote}`;
+  if (moodChange === "worse")
+    return `Эта неделя была тяжелее прошлой — возможно, стоит уделить чуть больше внимания.${countNote}`;
+  return `Фон похож на прошлую неделю, без резких изменений.${countNote}`;
 }
 
 export interface CrisisContact {

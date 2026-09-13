@@ -1,6 +1,8 @@
 import { nanoid } from "nanoid";
 import { dbGet, dbAll, dbRun } from "./db";
 import { sendPushToFamily } from "./push";
+import { OBSERVATION_DOMAIN_MAP, REPORT_DOMAIN_MAP } from "./insights";
+import { DOMAIN_LABEL } from "./content";
 import type { Alert, Checkin } from "./types";
 
 async function createAlert(
@@ -55,7 +57,7 @@ export async function evaluateMoodTrend(familyId: string, childId: string) {
       childId,
       "trend",
       "warn",
-      "На этой неделе тяжёлый эмоциональный фон отмечался чаще обычного. Это не диагноз — сигнал, что стоит мягко поговорить."
+      `За последние ${rows.length} дней тяжёлый эмоциональный фон отмечался ${hardDays} раз(а) — заметно чаще обычного. Это не диагноз — сигнал, что стоит мягко поговорить.`
     );
   }
 }
@@ -76,7 +78,7 @@ export async function evaluateDilemmaPattern(familyId: string, childId: string) 
       childId,
       "pattern",
       "warn",
-      "В ответах на истории повторяется паттерн избегания или самообвинения. Стоит мягко обсудить, что происходит в общении со сверстниками."
+      `В ${concerning} из последних ${rows.length} историй проявился паттерн избегания или самообвинения. Стоит мягко обсудить, что происходит в общении со сверстниками.`
     );
   }
 }
@@ -87,14 +89,19 @@ export async function evaluateWeeklyObservation(
   childId: string,
   answers: Record<string, number>
 ) {
-  const concerningDomains = Object.values(answers).filter((v) => v >= 4).length;
-  if (concerningDomains >= 3) {
+  const concerningKeys = Object.entries(answers)
+    .filter(([, v]) => v >= 4)
+    .map(([k]) => k);
+  if (concerningKeys.length >= 3) {
+    const labels = [
+      ...new Set(concerningKeys.map((k) => DOMAIN_LABEL[OBSERVATION_DOMAIN_MAP[k]] ?? k)),
+    ].join(", ");
     await createAlert(
       familyId,
       childId,
       "trend",
       "warn",
-      "На этой неделе сразу несколько признаков (сон, вспышки, адаптивность) отмечены как выраженные. Стоит обратить внимание и, при повторении, показать педиатру."
+      `На этой неделе сразу несколько признаков отмечены как выраженные: ${labels}. Стоит обратить внимание и, при повторении, показать педиатру.`
     );
     return;
   }
@@ -108,12 +115,13 @@ export async function evaluateWeeklyObservation(
   const keys = Object.keys(answers);
   for (const key of keys) {
     if (parsed.every((w) => (w[key] ?? 0) >= 4)) {
+      const label = DOMAIN_LABEL[OBSERVATION_DOMAIN_MAP[key]] ?? key;
       await createAlert(
         familyId,
         childId,
         "trend",
         "warn",
-        "Один и тот же признак отмечается три недели подряд. Рекомендуем обсудить это с педиатром или детским психологом."
+        `Признак «${label}» отмечается три недели подряд. Рекомендуем обсудить это с педиатром или детским психологом.`
       );
       break;
     }
@@ -135,12 +143,13 @@ export async function evaluateBiweeklyReport(
   const keys = Object.keys(scores);
   for (const key of keys) {
     if (parsed.every((p) => (p[key] ?? 0) >= 4)) {
+      const label = DOMAIN_LABEL[REPORT_DOMAIN_MAP[key]] ?? key;
       await createAlert(
         familyId,
         childId,
         "trend",
         "warn",
-        "На протяжении нескольких периодов сохраняется повышенный уровень стресса или тревоги. Стоит предложить поддержку специалиста."
+        `Показатель «${label}» остаётся повышенным на протяжении нескольких периодов подряд (${parsed.length} отчёта). Стоит предложить поддержку специалиста.`
       );
       break;
     }

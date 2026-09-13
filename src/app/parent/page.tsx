@@ -7,7 +7,13 @@ import {
   getOpenAlertsForChild,
   getWeeklyObservationForWeek,
 } from "@/lib/queries";
-import { getDominantDomain, getTrendDirection, getCheckinRate } from "@/lib/insights";
+import {
+  getDominantDomain,
+  getTrendDirection,
+  getCheckinRate,
+  getWeekComparison,
+  getWeekMap,
+} from "@/lib/insights";
 import { getRecommendations } from "@/lib/content";
 import { getCurrentWeekStart } from "@/lib/week";
 import ParentDashboard, { type ParentDashboardData } from "./_components/ParentDashboard";
@@ -77,6 +83,8 @@ export default async function ParentPage({
     moodPoints,
     checkinRate: getCheckinRate(checkins, 7),
     trend: getTrendDirection(checkins),
+    weekComparison: getWeekComparison(checkins),
+    weekMap: getWeekMap(checkins),
     alerts,
     recommendations,
     dominantDomain,

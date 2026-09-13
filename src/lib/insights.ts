@@ -8,7 +8,7 @@ import {
 } from "./queries";
 import { getCurrentWeekStart } from "./week";
 
-const OBSERVATION_DOMAIN_MAP: Record<string, Domain> = {
+export const OBSERVATION_DOMAIN_MAP: Record<string, Domain> = {
   sleep: "sleep_regulation",
   outbursts: "mood",
   social: "social",
@@ -16,7 +16,7 @@ const OBSERVATION_DOMAIN_MAP: Record<string, Domain> = {
   sharing: "social",
 };
 
-const REPORT_DOMAIN_MAP: Record<string, Domain> = {
+export const REPORT_DOMAIN_MAP: Record<string, Domain> = {
   stress: "stress",
   anxiety: "anxiety",
   sleep: "sleep_regulation",
@@ -91,4 +91,58 @@ export function getCheckinRate(checkins: Checkin[], days = 7): string {
   const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
   const count = checkins.filter((c) => c.date >= cutoff).length;
   return `${Math.min(count, days)}/${days}`;
+}
+
+export type MoodChange = "better" | "worse" | "same" | "not_enough_data";
+
+export interface WeekComparison {
+  thisWeekCount: number;
+  lastWeekCount: number;
+  moodChange: MoodChange;
+}
+
+/** Compares the last 7 days against the 7 days before that. checkins should cover at least 14 days. */
+export function getWeekComparison(checkins: Checkin[]): WeekComparison {
+  const cutoff7 = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  const cutoff14 = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  const thisWeek = checkins.filter((c) => c.date > cutoff7);
+  const lastWeek = checkins.filter((c) => c.date > cutoff14 && c.date <= cutoff7);
+  const avg = (arr: Checkin[]) =>
+    arr.length ? arr.reduce((s, c) => s + c.mood_value, 0) / arr.length : null;
+  const thisWeekAvg = avg(thisWeek);
+  const lastWeekAvg = avg(lastWeek);
+  let moodChange: MoodChange = "not_enough_data";
+  if (thisWeekAvg !== null && lastWeekAvg !== null) {
+    const diff = thisWeekAvg - lastWeekAvg;
+    moodChange = diff < -0.4 ? "better" : diff > 0.4 ? "worse" : "same";
+  }
+  return { thisWeekCount: thisWeek.length, lastWeekCount: lastWeek.length, moodChange };
+}
+
+export interface WeekMapDay {
+  date: string;
+  weekday: string;
+  value: number | null;
+  isToday: boolean;
+}
+
+const WEEKDAY_SHORT = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
+
+/** Last 7 calendar days (oldest first) with the child's mood_value for each, or null if no checkin. */
+export function getWeekMap(checkins: Checkin[]): WeekMapDay[] {
+  const byDate = new Map(checkins.map((c) => [c.date, c.mood_value]));
+  const today = new Date();
+  const days: WeekMapDay[] = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const date = d.toISOString().slice(0, 10);
+    days.push({
+      date,
+      weekday: WEEKDAY_SHORT[d.getDay()],
+      value: byDate.get(date) ?? null,
+      isToday: i === 0,
+    });
+  }
+  return days;
 }

@@ -7,16 +7,18 @@ import AddChildForm from "./AddChildForm";
 import WeeklyObservationForm from "./WeeklyObservationForm";
 import PrivacyInfoModal from "./PrivacyInfoModal";
 import NotificationSettings from "./NotificationSettings";
+import WeekMap from "./WeekMap";
 import {
   DOMAIN_LABEL,
   SAFETY_DISCLAIMER,
   CRISIS_CONTACTS,
   getConversationStarter,
+  getWeekComparisonText,
   type AdviceItem,
   type Domain,
 } from "@/lib/content";
 import type { Alert, AgeGroup } from "@/lib/types";
-import type { TrendDirection } from "@/lib/insights";
+import type { TrendDirection, WeekComparison, WeekMapDay } from "@/lib/insights";
 
 export interface DashboardChild {
   id: string;
@@ -33,6 +35,8 @@ export interface ParentDashboardData {
   moodPoints: MoodPoint[];
   checkinRate: string;
   trend: TrendDirection;
+  weekComparison: WeekComparison;
+  weekMap: WeekMapDay[];
   alerts: Alert[];
   recommendations: AdviceItem[];
   dominantDomain: Domain | null;
@@ -48,6 +52,11 @@ export default function ParentDashboard({ data }: { data: ParentDashboardData })
   const critical = data.alerts.find((a) => a.severity === "critical");
   const warnings = data.alerts.filter((a) => a.severity !== "critical");
   const conversationStarter = getConversationStarter(data.selectedChild.age_group);
+  const weekComparisonText = getWeekComparisonText(
+    data.weekComparison.moodChange,
+    data.weekComparison.thisWeekCount,
+    data.weekComparison.lastWeekCount
+  );
 
   return (
     <div className="max-w-lg mx-auto w-full px-4 py-6">
@@ -109,10 +118,11 @@ export default function ParentDashboard({ data }: { data: ParentDashboardData })
       <div className="card-duo p-4 mb-4">
         <h3 className="text-sm font-display font-medium mb-1">Эмоциональный фон · 14 дней</h3>
         <MoodChart points={data.moodPoints} />
-        <div className="flex justify-between text-[11px] text-[#8C8577] mt-1">
+        <div className="flex justify-between text-[11px] text-[#8C8577] mt-1 mb-3">
           <span>2 недели назад</span>
           <span>сегодня</span>
         </div>
+        <WeekMap days={data.weekMap} />
       </div>
 
       <div className="grid grid-cols-3 gap-2 mb-4">
@@ -127,6 +137,11 @@ export default function ParentDashboard({ data }: { data: ParentDashboardData })
             data.trend === "up" ? "фон улучшается" : data.trend === "down" ? "стоит присмотреться" : "стабильно"
           }
         />
+      </div>
+
+      <div className="card-duo p-4 mb-4">
+        <h3 className="text-sm font-display font-medium mb-2">Что изменилось за неделю</h3>
+        <p className="text-sm text-[#2E3550]">{weekComparisonText}</p>
       </div>
 
       <div className="card-duo p-4 mb-4">
